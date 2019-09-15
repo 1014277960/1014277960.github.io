@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/android.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介Service作为Android的四大组件之一，它的重要性不言而喻，之前虽说看过一些介绍但是一直没有用过，最近需要用到的时候发现无从下手，便阅读了官方的有关Service的Guide，这里总结一下。 Service作用官方介绍如下  A Service is an application component representing either an application’s desire">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Service简析">
+<meta property="og:url" content="http://yoursite.com/2016/07/11/Service简析/index.html">
+<meta property="og:site_name" content="干就完事了">
+<meta property="og:description" content="简介Service作为Android的四大组件之一，它的重要性不言而喻，之前虽说看过一些介绍但是一直没有用过，最近需要用到的时候发现无从下手，便阅读了官方的有关Service的Guide，这里总结一下。 Service作用官方介绍如下  A Service is an application component representing either an application’s desire">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-15T04:12:58.954Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Service简析">
+<meta name="twitter:description" content="简介Service作为Android的四大组件之一，它的重要性不言而喻，之前虽说看过一些介绍但是一直没有用过，最近需要用到的时候发现无从下手，便阅读了官方的有关Service的Guide，这里总结一下。 Service作用官方介绍如下  A Service is an application component representing either an application’s desire">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/07/11/Service简析/">
+
+
+
+
+
+  <title>Service简析 | 干就完事了</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">干就完事了</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Stay Hungry, Stay Foolish</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/11/Service简析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XDMrWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="干就完事了">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Service简析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-11T19:47:06+08:00">
+                2016-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android源码/" itemprop="url" rel="index">
+                    <span itemprop="name">Android源码</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Service作为Android的四大组件之一，它的重要性不言而喻，之前虽说看过一些介绍但是一直没有用过，最近需要用到的时候发现无从下手，便阅读了官方的有关Service的Guide，这里总结一下。</p>
+<h3 id="Service作用"><a href="#Service作用" class="headerlink" title="Service作用"></a>Service作用</h3><p>官方介绍如下</p>
+<blockquote>
+<p>A Service is an application component representing either an application’s desire to perform a longer-running operation while not interacting with the user or to supply functionality for other applications to use.</p>
+</blockquote>
+<p>Service主要用于在后台执行长期任务或者耗时操作，在需要的时候甚至可以在应用退出的时候保持运行状态。</p>
+<h3 id="Service与Thread"><a href="#Service与Thread" class="headerlink" title="Service与Thread"></a>Service与Thread</h3><p>虽说Service可以在后台执行任务，但是实际上一个Service是运行在主线程的，如果有耗时操作我们必须在Service中自己开启一个Thread避免ANR。那就会有这么一个问题，我们为什么不用Thread呢？主要的原因就是Thread的可控性不好，假设我们在一个Activity中启动了一个Thread，一旦这个Activity结束了，那么其他的Activity就没有办法拿到这个Thread的引用，更别谈控制了。可是Service不一样，一个Service整个程序只会创建一个实例，而且任何Activity都可以控制，那么Service里的Thread就可以由所有Activity控制了。而且Service作为四大组件之一，有较高级别，在后台运行不容易被系统杀掉。</p>
+<h2 id="Service分类"><a href="#Service分类" class="headerlink" title="Service分类"></a>Service分类</h2><p>Service分为两类</p>
+<ul>
+<li><p>Started Service：不和其他组件通信</p>
+</li>
+<li><p>Bound Service：可以和其他组件通信</p>
+<p>无论使用哪一种Service都必须重写onBind()方法，如果使用Started Service返回null就可以了。</p>
+</li>
+</ul>
+<h3 id="使用Started-Service"><a href="#使用Started-Service" class="headerlink" title="使用Started Service"></a>使用Started Service</h3><p>一般需要再重写两个方法</p>
+<ul>
+<li>onCreate():启动Service的时候并不存在该Service实例，就会调用该方法。</li>
+<li>onStartCommand(Intent intent, int flags, int startId):每次通过startService(Intent intent)启动的时候就会掉用该方法，一般在这里开启新线程。</li>
+</ul>
+<p>onStartCommand(Intent intent, int flags, int startId)方法返回int类型的值，代表Service被kill后的行为，有以下三种：</p>
+<ul>
+<li>START_NOT_STICKY：表示不重新创建</li>
+<li>START_STICKY：表示重新创建，调用onStartCommand传入null</li>
+<li>START_REDELIVER_INTENT：表示重建，调用onStartCommand传入上一个Intent</li>
+</ul>
+<p>为了节省资源和电量，我们在任务结束后必须关闭Service，想要关闭Service可以通过本身调用stopSelf()或者其他组件调用stopService(),但是如果我们的Service处理多个onStartCommand请求的时候，我们在请求结束后掉用stopSelf()可能会打断已经收到的新的请求，最好的情况就是我们本身就是最后一个请求，stopSelt(int)的一个参数的重载可以解决这个方法，传入的id就是onStartCommand传递进来的id，代表当前任务的id，它会把传入的id和最后一个id比较，如果一样的话就代表本身是最后一个任务，就会stop掉，否则不会执行stop。</p>
+<h3 id="使用Bound-Service"><a href="#使用Bound-Service" class="headerlink" title="使用Bound Service"></a>使用Bound Service</h3><p>主要和Started Service的区别就是可以和其他组件通信，通过Binder。<br>创建时必须定义接口描述用户如何与Server交流，接口必须继承Binder。使用bindService()创建，必须提供一个ServiceConnection的实现，，bindService()是一个异步方法，立马回返回。当创建完后会调用ServiceConnection的onServiceConnected，并传递binder通信。onBind方法只在第一个用户连接调用，后来都返回同一个binder（因为只会有一个Service），代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Binder given to clients</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> IBinder mBinder = <span class="keyword">new</span> LocalBinder();</span><br><span class="line">    <span class="comment">// Random number generator</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Random mGenerator = <span class="keyword">new</span> Random();</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Class used for the client Binder.  Because we know this service always</span></span><br><span class="line"><span class="comment">     * runs in the same process as its clients, we don't need to deal with IPC.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalBinder</span> <span class="keyword">extends</span> <span class="title">Binder</span> </span>&#123;</span><br><span class="line">        <span class="function">LocalService <span class="title">getService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">// Return this instance of LocalService so clients can call public methods</span></span><br><span class="line">            <span class="keyword">return</span> LocalService.<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mBinder;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** method for clients */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getRandomNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> mGenerator.nextInt(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>bind service的代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> ServiceConnection mConnection = <span class="keyword">new</span> ServiceConnection() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName className,</span></span></span><br><span class="line"><span class="function"><span class="params">                IBinder service)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// We've bound to LocalService, cast the IBinder and get LocalService instance</span></span><br><span class="line">            LocalBinder binder = (LocalBinder) service;</span><br><span class="line">            mService = binder.getService();</span><br><span class="line">            mBound = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceDisconnected</span><span class="params">(ComponentName arg0)</span> </span>&#123;</span><br><span class="line">            mBound = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bindService(intent, mConnection, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>可以看出我们在Service中自定义了binder继承自Binder，并声明了一个方法，然后在onBind()中返回一个实例。我们会在onServiceConnected方法中得到这个binder，然后我们调用里的方法得到Service的实例，这样就可以掉用里面方法了，也就完成了通信。bindServicer第三个参数是刚开始的选择，如果是BIND_AUTO_CREATE表示如果没启动就新建</p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>onServiceDisconnected方法不是unbind的时候调用的，实在被kill等意外情况调用的</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/05/PagerSlidingTabStrip源码解析/" rel="next" title="PagerSlidingTabStrip源码解析">
+                <i class="fa fa-chevron-left"></i> PagerSlidingTabStrip源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/11/自定义动画实现splash页面3d旋转切换主页面/" rel="prev" title="自定义动画实现splash页面3d旋转切换主页面">
+                自定义动画实现splash页面3d旋转切换主页面 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="XDMrWu">
+            
+              <p class="site-author-name" itemprop="name">XDMrWu</p>
+              <p class="site-description motion-element" itemprop="description">Android从入门到放弃</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/1014277960" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1014277960@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Service作用"><span class="nav-number">1.1.</span> <span class="nav-text">Service作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service与Thread"><span class="nav-number">1.2.</span> <span class="nav-text">Service与Thread</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service分类"><span class="nav-number">2.</span> <span class="nav-text">Service分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Started-Service"><span class="nav-number">2.1.</span> <span class="nav-text">使用Started Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用Bound-Service"><span class="nav-number">2.2.</span> <span class="nav-text">使用Bound Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注意事项"><span class="nav-number">2.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XDMrWu</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">24.3k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

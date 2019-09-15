@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/android.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概述一开始的时候尝试通过Android的事件分发机制来实现，但是child一旦消耗事件，那么后续事件是不会传给Parent的，只能重写dispatchTouchEvent来拦截，这样做相当于重写了Android的事件分发机制，我自认水平是不够的。随后阅读了Android官方刷新空间SwipeRefreshLayout，发现是使用的NestedScrolling机制，具体使用可以看鸿洋大神的这篇文章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自己动手写一个简单的Android下拉刷新">
+<meta property="og:url" content="http://yoursite.com/2018/04/12/自己动手写一个简单的Android下拉刷新/index.html">
+<meta property="og:site_name" content="干就完事了">
+<meta property="og:description" content="概述一开始的时候尝试通过Android的事件分发机制来实现，但是child一旦消耗事件，那么后续事件是不会传给Parent的，只能重写dispatchTouchEvent来拦截，这样做相当于重写了Android的事件分发机制，我自认水平是不够的。随后阅读了Android官方刷新空间SwipeRefreshLayout，发现是使用的NestedScrolling机制，具体使用可以看鸿洋大神的这篇文章">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-15T04:51:54.627Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自己动手写一个简单的Android下拉刷新">
+<meta name="twitter:description" content="概述一开始的时候尝试通过Android的事件分发机制来实现，但是child一旦消耗事件，那么后续事件是不会传给Parent的，只能重写dispatchTouchEvent来拦截，这样做相当于重写了Android的事件分发机制，我自认水平是不够的。随后阅读了Android官方刷新空间SwipeRefreshLayout，发现是使用的NestedScrolling机制，具体使用可以看鸿洋大神的这篇文章">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/12/自己动手写一个简单的Android下拉刷新/">
+
+
+
+
+
+  <title>自己动手写一个简单的Android下拉刷新 | 干就完事了</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">干就完事了</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Stay Hungry, Stay Foolish</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/12/自己动手写一个简单的Android下拉刷新/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XDMrWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="干就完事了">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">自己动手写一个简单的Android下拉刷新</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-12T17:36:04+08:00">
+                2018-04-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android自定义控件/" itemprop="url" rel="index">
+                    <span itemprop="name">Android自定义控件</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  824
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>一开始的时候尝试通过Android的事件分发机制来实现，但是child一旦消耗事件，那么后续事件是不会传给Parent的，只能重写dispatchTouchEvent来拦截，这样做相当于重写了Android的事件分发机制，我自认水平是不够的。随后阅读了Android官方刷新空间SwipeRefreshLayout，发现是使用的NestedScrolling机制，具体使用可以看鸿洋大神的这篇文章<a href="https://blog.csdn.net/lmj623565791/article/details/52204039" target="_blank" rel="noopener">https://blog.csdn.net/lmj623565791/article/details/52204039</a> 所以本篇文章就使用NestedScrolling机制来实现针对RecyclerView的下拉刷新功能，别的控件暂不支持。</p>
+<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>控件本身继承自LinearLayout，有两个child，分别是Header和Content，通过设置Header的TopMargin来控制Header的滑动效果。</p>
+<h2 id="实现NestedScrollingParent"><a href="#实现NestedScrollingParent" class="headerlink" title="实现NestedScrollingParent"></a>实现NestedScrollingParent</h2><p>维护两个变量</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> mUnConsumedY = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> mHeaderShowHeight = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>mHeaderShowHeight表示当前Header显示部分的高度，mUnConsumedY表示当前给RecyclerView消费掉的Y距离，通过这个变量来判断RecyclerView是否滑到顶端。</p>
+<h3 id="实现onNestedPreScroll方法"><a href="#实现onNestedPreScroll方法" class="headerlink" title="实现onNestedPreScroll方法"></a>实现onNestedPreScroll方法</h3><p>通过这个方法实现在滑动之前判断应该消费多少Y距离，只有两种情况</p>
+<ul>
+<li>向上滑动且mHeaderShowHeight大于0，这时候消费掉dy，不给child消费，同时更新mHeaderShowHeight</li>
+<li>向下滑动且mUnConsumedY为0，这时候消费dy。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedPreScroll</span><span class="params">(View target, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy, <span class="keyword">int</span>[] consumed)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (dy &gt; <span class="number">0</span> &amp;&amp; mHeaderShowHeight &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// header显示的时候上滑</span></span><br><span class="line">        <span class="keyword">if</span> (dy &lt;= mHeaderShowHeight) &#123;</span><br><span class="line">            mHeaderShowHeight -= dy;</span><br><span class="line">            consumed[<span class="number">1</span>] = dy;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            consumed[<span class="number">1</span>] = mHeaderShowHeight;</span><br><span class="line">            mHeaderShowHeight = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (dy &lt; <span class="number">0</span> &amp;&amp; mUnConsumedY == <span class="number">0</span>) &#123;</span><br><span class="line">        consumed[<span class="number">1</span>] = dy;</span><br><span class="line">        mHeaderShowHeight -= dy;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 其他情况皆为更新mUnConsumedY，在onNestedScroll方法中更新</span></span><br><span class="line">    Log.d(<span class="string">"Debug"</span>, mHeaderShowHeight + <span class="string">" "</span> + mUnConsumedY);</span><br><span class="line">    processHeaderShowHeight();</span><br><span class="line">    updateProgress(mHeaderShowHeight);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 处理mHeaderShowHeight，如果高于mHeaderHeight，加一个滑动的阻力</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">processHeaderShowHeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 计算阻力作用后的mHeaderShowHeight</span></span><br><span class="line">    <span class="keyword">if</span> (mHeaderShowHeight &gt; mHeaderHeight) &#123;</span><br><span class="line">        <span class="keyword">int</span> extra = mHeaderShowHeight - mHeaderHeight;</span><br><span class="line">        <span class="comment">// 阻力系数</span></span><br><span class="line">        <span class="keyword">float</span> dragRatio = mHeaderHeight * <span class="number">1.0f</span> / mHeaderShowHeight;</span><br><span class="line">        mHeaderShowHeight = (<span class="keyword">int</span>) (mHeaderHeight + extra * dragRatio);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 通过mHeaderShowHeight来设置topMargin</span></span><br><span class="line">    setHeaderTopMarginWithShowHeight();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据mHeaderShowHeight更新当前进度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mHeaderShowHeight</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateProgress</span><span class="params">(<span class="keyword">int</span> mHeaderShowHeight)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">        mListener.onRefreshProgress(mHeaderShowHeight * <span class="number">1.0f</span> / mHeaderHeight);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其他的情况都是RecyclerView滑动，在onNestedScroll中更新mUnConsumedY</p>
+<h3 id="实现onNestedScroll方法"><a href="#实现onNestedScroll方法" class="headerlink" title="实现onNestedScroll方法"></a>实现onNestedScroll方法</h3><p>这个方法更新mUnConsumedY</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 在子view滑动后通过消耗和未消耗的，来计算子view是否滑动到最顶端</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> target</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> dxConsumed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> dyConsumed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> dxUnconsumed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> dyUnconsumed</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedScroll</span><span class="params">(View target, <span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);</span><br><span class="line">    mUnConsumedY += dyConsumed;</span><br><span class="line">    mUnConsumedY = Math.max(mUnConsumedY, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现onStopNestedScroll方法"><a href="#实现onStopNestedScroll方法" class="headerlink" title="实现onStopNestedScroll方法"></a>实现onStopNestedScroll方法</h3><p>这个方法里判断当前的状态，如果不是正在刷新或者释放刷新状态，都隐藏Header，否则进入刷新状态，判断是否释放刷新状态的阈值通过回调获得，回调下面来说</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStopNestedScroll</span><span class="params">(View child)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onStopNestedScroll(child);</span><br><span class="line">    <span class="keyword">if</span> (mHeaderShowHeight &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">float</span> changeStateRatio = mListener == <span class="keyword">null</span>? <span class="number">1.0f</span> : mListener.getChangeStateRatio();</span><br><span class="line">        <span class="keyword">if</span> (mHeaderShowHeight * <span class="number">1.0f</span> / mHeaderHeight &gt; changeStateRatio) &#123;</span><br><span class="line">            <span class="comment">// 开始刷新</span></span><br><span class="line">            startRefreshing();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            stopRefreshing();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现onNestedPreFling"><a href="#实现onNestedPreFling" class="headerlink" title="实现onNestedPreFling"></a>实现onNestedPreFling</h3><p>由于Fling操作会导致mUnConsumedY不能正常更新，所以重写这个方法返回true来禁止child实现这个操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onNestedPreFling</span><span class="params">(View target, <span class="keyword">float</span> velocityX, <span class="keyword">float</span> velocityY)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="定义刷新回调"><a href="#定义刷新回调" class="headerlink" title="定义刷新回调"></a>定义刷新回调</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">EasyRefreshListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onRefreshing</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 根据progress改变内容</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onRefreshProgress</span><span class="params">(<span class="keyword">float</span> progress)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 改变下拉状态的阈值</span></span><br><span class="line">    <span class="function"><span class="keyword">float</span> <span class="title">getChangeStateRatio</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>以上就是大致思路，具体的代码已经上传到<a href="https://github.com/1014277960/EasyRefresh" target="_blank" rel="noopener">Github</a>，后续会完善各项功能</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/02/Button点击时滑动的事件传递/" rel="next" title="Button点击时滑动的事件传递">
+                <i class="fa fa-chevron-left"></i> Button点击时滑动的事件传递
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/23/为RecyclerView添加loadmore功能/" rel="prev" title="为RecyclerView添加load more功能">
+                为RecyclerView添加load more功能 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="XDMrWu">
+            
+              <p class="site-author-name" itemprop="name">XDMrWu</p>
+              <p class="site-description motion-element" itemprop="description">Android从入门到放弃</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/1014277960" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1014277960@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现思路"><span class="nav-number">2.</span> <span class="nav-text">实现思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现NestedScrollingParent"><span class="nav-number">3.</span> <span class="nav-text">实现NestedScrollingParent</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现onNestedPreScroll方法"><span class="nav-number">3.1.</span> <span class="nav-text">实现onNestedPreScroll方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现onNestedScroll方法"><span class="nav-number">3.2.</span> <span class="nav-text">实现onNestedScroll方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现onStopNestedScroll方法"><span class="nav-number">3.3.</span> <span class="nav-text">实现onStopNestedScroll方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现onNestedPreFling"><span class="nav-number">3.4.</span> <span class="nav-text">实现onNestedPreFling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义刷新回调"><span class="nav-number">3.5.</span> <span class="nav-text">定义刷新回调</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XDMrWu</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">24.3k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
