@@ -77,22 +77,22 @@
 
 
 
-<meta name="description" content="Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。之前在做Story天窗的启动动画的时候用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源">
+<meta name="description" content="Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。之前在项目中用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源码，下图为实现效果。  P">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android共享元素动画原理解析">
 <meta property="og:url" content="http://yoursite.com/2019/04/16/Android共享元素动画原理解析/index.html">
 <meta property="og:site_name" content="干就完事了">
-<meta property="og:description" content="Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。之前在做Story天窗的启动动画的时候用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源">
+<meta property="og:description" content="Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。之前在项目中用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源码，下图为实现效果。  P">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/shared1.gif">
 <meta property="og:image" content="http://yoursite.com/images/shared2.png">
 <meta property="og:image" content="http://yoursite.com/images/shared3.png">
 <meta property="og:image" content="http://yoursite.com/images/shared4.png">
 <meta property="og:image" content="http://yoursite.com/images/shared5.gif">
-<meta property="og:updated_time" content="2019-09-16T13:40:39.244Z">
+<meta property="og:updated_time" content="2019-09-16T13:55:26.383Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android共享元素动画原理解析">
-<meta name="twitter:description" content="Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。之前在做Story天窗的启动动画的时候用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源">
+<meta name="twitter:description" content="Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。之前在项目中用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源码，下图为实现效果。  P">
 <meta name="twitter:image" content="http://yoursite.com/images/shared1.gif">
 
 
@@ -413,7 +413,7 @@
       
 
       
-        <p>Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。<br>之前在做Story天窗的启动动画的时候用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源码，下图为实现效果。</p>
+        <p>Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。<br>之前在项目中用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源码，下图为实现效果。</p>
 <center><img src="/images/shared1.gif" width="200px"></center>
 PS:本文源码基于android-28
 
@@ -493,17 +493,19 @@ $$
 <p class="img-tip" data-str="image.png"><img src="/images/shared4.png" height="540" width="864/"></p>
 
 我们举个例子来说明这个方法，假设图中A代表屏幕，B为一个ViewGroup，左上角在A中的坐标为(100, 100)，C长宽均为100，是B的child view，左上角在B中的坐标是(50, 50)，同时C设置了transaltion，x、y均偏移25也就是图中灰色的区域(绿色区域为C的真实位置)。C的`transformMatrixToGlobal`方法中首先获取到Parent也就是B的Matrix，得到的是x、y偏移100的矩阵
-$$B=
-\\left\{
+$$
+B=
+\left\{
  \begin{matrix}
    1 & 0 & 100 \\
    0 & 1 & 100 \\
    0 & 0 & 1 \\
- \\end{matrix} 
-\\right\}
+ \end{matrix} 
+\right\}
 $$
 随后将矩阵B偏移C在Parent中的left/top
-$$C=
+$$
+C=
 \left\{
  \begin{matrix}
    1 & 0 & 100 \\
@@ -529,7 +531,8 @@ $$C=
 \right\}
 $$
 因为C本身设置了translation，所以自身有一个非单位矩阵，将C乘以该矩阵得到最终的矩阵C2
-$$C2=
+$$
+C2=
 \left\{
  \begin{matrix}
    1 & 0 & 150 \\
@@ -867,7 +870,7 @@ originState就是之前调用`setSharedElementState`返回的原始状态，我�
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">31.8k</span>
+    <span title="Site words total count">31.5k</span>
   
 </div>
 
