@@ -77,17 +77,17 @@
 
 
 
-<meta name="description" content="线程池简介我们在实现并发功能时会频繁的创建和销毁线程，这样会加大系统的开销，而线程池会缓存一定数量的线程，可以避免这样的情况，并且线程池可以对现场进行简单的管理，简化了并发编程。 ThreadPoolExecutorJava中的线程池定义为Executor接口，实现这个接口的类为ThreadPoolExecutor，是线程池的真正实现。常用的构造方法为 123456public ThreadPoo">
+<meta name="description" content="协程是什么 协程实际上是一个轻量级的线程，可以挂起并稍后恢复  kotlin中，协程把异步编程放入库中来简化这类操作。程序逻辑在协程中顺序表述，而底层的库会将其转换为异步操作。库会将相关的用户代码打包成回调，调度其执行到不同的线程，而代码依然像顺序执行那么简单。 协程的优势协程主要是让原来要使用“异步+回调”写出来的复杂代码，简化成看起来是同步的代码，本质上是callback的语法糖。 kotli">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java线程池简析">
-<meta property="og:url" content="http://yoursite.com/2016/08/30/Java线程池简析/index.html">
+<meta property="og:title" content="kotlin协程">
+<meta property="og:url" content="http://yoursite.com/2019/03/21/kotlin协程/index.html">
 <meta property="og:site_name" content="干就完事了">
-<meta property="og:description" content="线程池简介我们在实现并发功能时会频繁的创建和销毁线程，这样会加大系统的开销，而线程池会缓存一定数量的线程，可以避免这样的情况，并且线程池可以对现场进行简单的管理，简化了并发编程。 ThreadPoolExecutorJava中的线程池定义为Executor接口，实现这个接口的类为ThreadPoolExecutor，是线程池的真正实现。常用的构造方法为 123456public ThreadPoo">
+<meta property="og:description" content="协程是什么 协程实际上是一个轻量级的线程，可以挂起并稍后恢复  kotlin中，协程把异步编程放入库中来简化这类操作。程序逻辑在协程中顺序表述，而底层的库会将其转换为异步操作。库会将相关的用户代码打包成回调，调度其执行到不同的线程，而代码依然像顺序执行那么简单。 协程的优势协程主要是让原来要使用“异步+回调”写出来的复杂代码，简化成看起来是同步的代码，本质上是callback的语法糖。 kotli">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-15T04:21:14.873Z">
+<meta property="og:updated_time" content="2019-09-17T11:56:13.412Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java线程池简析">
-<meta name="twitter:description" content="线程池简介我们在实现并发功能时会频繁的创建和销毁线程，这样会加大系统的开销，而线程池会缓存一定数量的线程，可以避免这样的情况，并且线程池可以对现场进行简单的管理，简化了并发编程。 ThreadPoolExecutorJava中的线程池定义为Executor接口，实现这个接口的类为ThreadPoolExecutor，是线程池的真正实现。常用的构造方法为 123456public ThreadPoo">
+<meta name="twitter:title" content="kotlin协程">
+<meta name="twitter:description" content="协程是什么 协程实际上是一个轻量级的线程，可以挂起并稍后恢复  kotlin中，协程把异步编程放入库中来简化这类操作。程序逻辑在协程中顺序表述，而底层的库会将其转换为异步操作。库会将相关的用户代码打包成回调，调度其执行到不同的线程，而代码依然像顺序执行那么简单。 协程的优势协程主要是让原来要使用“异步+回调”写出来的复杂代码，简化成看起来是同步的代码，本质上是callback的语法糖。 kotli">
 
 
 
@@ -117,13 +117,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/08/30/Java线程池简析/">
+  <link rel="canonical" href="http://yoursite.com/2019/03/21/kotlin协程/">
 
 
 
 
 
-  <title>Java线程池简析 | 干就完事了</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>kotlin协程 | 干就完事了</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -272,7 +272,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/30/Java线程池简析/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/21/kotlin协程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="XDMrWu">
@@ -289,7 +289,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Java线程池简析</h1>
+          <h1 class="post-title" itemprop="name headline">kotlin协程</h1>
         
 
         <div class="post-meta">
@@ -301,8 +301,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-30T21:16:03+08:00">
-                2016-08-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-21T21:22:00+08:00">
+                2019-03-21
               </time>
             
 
@@ -324,8 +324,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index">
-                    <span itemprop="name">java</span>
+                  <a href="/categories/kotlin/" itemprop="url" rel="index">
+                    <span itemprop="name">kotlin</span>
                   </a>
                 </span>
 
@@ -342,8 +342,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/08/30/Java线程池简析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2016/08/30/Java线程池简析/" itemprop="commentCount"></span>
+                <a href="/2019/03/21/kotlin协程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/21/kotlin协程/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -370,7 +370,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.1k
+                  1.3k
                 </span>
               
 
@@ -386,7 +386,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  5
                 </span>
               
             </div>
@@ -407,40 +407,47 @@
       
 
       
-        <h1 id="线程池简介"><a href="#线程池简介" class="headerlink" title="线程池简介"></a>线程池简介</h1><p>我们在实现并发功能时会频繁的创建和销毁线程，这样会加大系统的开销，而线程池会缓存一定数量的线程，可以避免这样的情况，并且线程池可以对现场进行简单的管理，简化了并发编程。</p>
-<h1 id="ThreadPoolExecutor"><a href="#ThreadPoolExecutor" class="headerlink" title="ThreadPoolExecutor"></a>ThreadPoolExecutor</h1><p>Java中的线程池定义为Executor接口，实现这个接口的类为ThreadPoolExecutor，是线程池的真正实现。常用的构造方法为</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                          TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">                          BlockingQueue&lt;Runnable&gt; workQueue,</span></span></span><br><span class="line"><span class="function"><span class="params">                          ThreadFactory threadFactory)</span></span></span><br></pre></td></tr></table></figure>
+        <h1 id="协程是什么"><a href="#协程是什么" class="headerlink" title="协程是什么"></a>协程是什么</h1><blockquote>
+<p>协程实际上是一个轻量级的线程，可以挂起并稍后恢复</p>
+</blockquote>
+<p>kotlin中，协程把异步编程放入库中来简化这类操作。程序逻辑在协程中顺序表述，而底层的库会将其转换为异步操作。库会将相关的用户代码打包成回调，调度其执行到不同的线程，而代码依然像顺序执行那么简单。</p>
+<h1 id="协程的优势"><a href="#协程的优势" class="headerlink" title="协程的优势"></a>协程的优势</h1><p>协程主要是让原来要使用“异步+回调”写出来的复杂代码，简化成看起来是同步的代码，本质上是callback的语法糖。</p>
+<h1 id="kotlin标准库提供的基本的元素-操作"><a href="#kotlin标准库提供的基本的元素-操作" class="headerlink" title="kotlin标准库提供的基本的元素/操作"></a>kotlin标准库提供的基本的元素/操作</h1><h2 id="suspend-关键字"><a href="#suspend-关键字" class="headerlink" title="suspend 关键字"></a>suspend 关键字</h2><p>Kotlin在1.1版本新增加了 suspend 关键字，可以用来修饰函数或者 lambda 表达式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">suspend fun <span class="title">suspendFun</span><span class="params">()</span>: String </span>&#123;&#125;</span><br><span class="line">val suspendLambda1: suspend () -&gt; String = &#123;&#125;</span><br><span class="line">val suspendLambda2 = suspend &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>被suspend修饰的方法只能在另一个suspend方法或者一个协程中被调用，suspend表示这个方法是一个可中断挂起的方法</p>
+<h2 id="CoroutineContext"><a href="#CoroutineContext" class="headerlink" title="CoroutineContext"></a>CoroutineContext</h2><p>CoroutineContext是协程的上下文，表示一系列用户自定义的Object，也就是代表代码块执行在哪个场景</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">CoroutineContext</span> </span>&#123;</span><br><span class="line">    operator fun &lt;E : Element&gt; get(key: Key&lt;E&gt;): E?</span><br><span class="line">    fun &lt;R&gt; fold(initial: R, operation: (R, Element) -&gt; R): R</span><br><span class="line">    <span class="function">operator fun <span class="title">plus</span><span class="params">(context: CoroutineContext)</span>: CoroutineContext</span></span><br><span class="line"><span class="function">    fun <span class="title">minusKey</span><span class="params">(key: Key&lt;*&gt;)</span>: CoroutineContext</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+
 <ul>
-<li>corePoolSize：线程池中的核心线程数量，核心线程理论上会一直存活，就算是闲置状态。</li>
-<li>maximumPoolSize：允许线程池最大容纳的线程数，一旦满了，后面新到来的任务会被阻塞。</li>
-<li>keepAliveTime：线程闲置的超时时长，闲置时间超过就会被销毁，适用于非核心线程。如果ThredPoolExecutor的allowCoreThreadTimeOut设置为true，那么核心线程也会超时销毁。</li>
-<li>unit：超时时长的单位，为枚举类型，常用的有毫秒 TimeUnit.MILLISECONDS、秒TimeUnit.SECONDS、分TimeUnit.MINUTES。</li>
-<li>workQueue：任务队列。</li>
-<li>threadFactory：提供创建线程的功能。</li>
+<li>get：获取当前指定Key对应的Context</li>
+<li>fold：类似集合的fold方法，用于累加</li>
+<li>plus：重载操作符plus，使得context之间可以用’+’符号运算获得一个新的context</li>
+<li>minusKey：获得除指定Key对应的Context之外的所有Context</li>
 </ul>
-<p>当任务到来的时候，如果核心线程数量没有达到最大核心线程数量，那么就创建核心线程执行任务。如果超过就将任务插入队列等待核心线程空下来。如果队列也满了，那就只有创建非核心线程（或者复用闲置非核心线程）执行任务。如果全部线程数达到最大值，拒绝执行任务。</p>
-<h1 id="四种线程池"><a href="#四种线程池" class="headerlink" title="四种线程池"></a>四种线程池</h1><h3 id="FixedThreadPool"><a href="#FixedThreadPool" class="headerlink" title="FixedThreadPool"></a>FixedThreadPool</h3><p>构造函数如下</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                  <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                  <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>核心线程和线程数一样说明只有核心线程，那么线程都不会被回收，可以很快的响应任务。</li>
-<li>且队列没有没有大小限制，可以看出新到来的任务肯定不会被拒绝，因为队列不会满，所有任务都可以被执行（核心线程满了就等待）。</li>
-</ul>
-<h3 id="CachedThreadPool"><a href="#CachedThreadPool" class="headerlink" title="CachedThreadPool"></a>CachedThreadPool</h3><p>构造函数如下</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                  <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                  <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>没有核心线程，且线程数是int的最大值，适用于大量的任务。</li>
-<li>SynchronousQueue实际上是不能插入的，所以任务到来的时候，首先没有核心线程，那么就会插入队列等待核心线程，但是这个队列不能插入，所以开启非核心线程执行，也就是说任务到来立马执行，适用于大量且耗时少的任务。</li>
-</ul>
-<h3 id="ScheduledThreadPool"><a href="#ScheduledThreadPool" class="headerlink" title="ScheduledThreadPool"></a>ScheduledThreadPool</h3><p>构造函数如下</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(<span class="keyword">int</span> corePoolSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ScheduledThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(corePoolSize, Integer.MAX_VALUE, <span class="number">0</span>, NANOSECONDS,</span><br><span class="line">          <span class="keyword">new</span> DelayedWorkQueue(), threadFactory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="SingleThreadExecutor"><a href="#SingleThreadExecutor" class="headerlink" title="SingleThreadExecutor"></a>SingleThreadExecutor</h3><p>构造函数如下</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> FinalizableDelegatedExecutorService</span><br><span class="line">        (<span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">                                <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>就一个核心线程，线程只允许一个，等待队列没限制，也就是说任务是串行执行的，不用考虑同步的问题。</p>
-<h3 id="执行任务"><a href="#执行任务" class="headerlink" title="执行任务"></a>执行任务</h3><h4 id="执行Runnable"><a href="#执行Runnable" class="headerlink" title="执行Runnable"></a>执行Runnable</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService exe = Executors.newCachedThreadPool();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i != <span class="number">5</span>; i++) &#123;</span><br><span class="line">			exe.execute(<span class="keyword">new</span> Task());</span><br><span class="line">		&#125;</span><br><span class="line">		exe.shutdown();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// do something here</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过execute执行任务，shutdown()方法可以防止新任务被提交给这个Executor，执行完之前的所有任务后会尽快退出。</p>
-<h4 id="执行Callable"><a href="#执行Callable" class="headerlink" title="执行Callable"></a>执行Callable</h4><p>Runnable执行任务不返回任何值，想要有返回值的话可以使用Callable</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService exe = Executors.newCachedThreadPool();</span><br><span class="line">		List&lt;Future&lt;String&gt;&gt; results = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i != <span class="number">5</span>; i++) &#123;</span><br><span class="line">			results.add(exe.submit(<span class="keyword">new</span> Task()));</span><br><span class="line">		&#125;</span><br><span class="line">		exe.shutdown();</span><br><span class="line">		<span class="keyword">for</span> (Future&lt;String&gt; fs : results) &#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				System.out.println(fs.get());</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> i++ + <span class="string">""</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>首先确定返回值的类型，这里是String，执行的方法是call而不是run。使用submit提交任务而不是execute，submit会返回Future<string>的值，然后我们遍历通过get()方法拿到返回值。值得注意的是，当Future未完成的时候，get()方法会阻塞，直到完成拿到返回值，我们可以通过isDone()判断是否完成。</string></p>
+<h2 id="Continuation"><a href="#Continuation" class="headerlink" title="Continuation"></a>Continuation</h2><p>表示协程中的执行单元</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Continuation</span>&lt;<span class="title">in</span> <span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> val context: CoroutineContext</span><br><span class="line">    <span class="function"><span class="keyword">public</span> fun <span class="title">resumeWith</span><span class="params">(result: Result&lt;T&gt;)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="ContinuationInterceptor"><a href="#ContinuationInterceptor" class="headerlink" title="ContinuationInterceptor"></a>ContinuationInterceptor</h2><p>Continuation的拦截器，继承自CoroutineContext，如果当协程的Context包含ContinuationInterceptor那么当前协程内所有的Continuation在执行前都会经过拦截器的替换。</p>
+<h2 id="创建和启动协程"><a href="#创建和启动协程" class="headerlink" title="创建和启动协程"></a>创建和启动协程</h2><p>创建协程的方式很简单，我们需要一个suspend lambda和一个Continuation，标准库为suspend lambda定义了扩展方法startCoroutine</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> fun &lt;T&gt; (suspend () -&gt; T).startCoroutine(</span><br><span class="line">    completion: Continuation&lt;T&gt;</span><br><span class="line">) &#123;</span><br><span class="line">    createCoroutineUnintercepted(completion).intercepted().resume(Unit)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该方法创建并启动一个协程，该协程的Context由传入的Continuation提供，且lambda执行完毕后回调该Continuation的resumeWith方法</p>
+<h2 id="挂起-恢复协程"><a href="#挂起-恢复协程" class="headerlink" title="挂起/恢复协程"></a>挂起/恢复协程</h2><p>通过在一个协程中调用标准库提供的suspendContinue方法来挂起当前协程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> suspend inline fun &lt;T&gt; suspendCoroutine(crossinline block: (Continuation&lt;T&gt;) -&gt; Unit): T =</span><br><span class="line">    suspendCoroutineUninterceptedOrReturn &#123; c: Continuation&lt;T&gt; -&gt;</span><br><span class="line">        val safe = SafeContinuation(c.intercepted())</span><br><span class="line">        block(safe)</span><br><span class="line">        safe.getOrThrow()</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>该方法接受一个参数为Continuation的lambda，开始执行该lambda并挂起当前协程，如果想要恢复协程的执行，通过调用传入的Continuation的resumeWith方法来恢复</p>
+<h1 id="Kotlinx提供的协程库"><a href="#Kotlinx提供的协程库" class="headerlink" title="Kotlinx提供的协程库"></a>Kotlinx提供的协程库</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'</span></span><br><span class="line">implementation <span class="string">'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.1'</span></span><br></pre></td></tr></table></figure>
+
+<p>对基础库协程的封装，提供更加简洁的api</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GlobalScope.launch(Dispatchers.Main) &#123;</span><br><span class="line">    launch &#123;</span><br><span class="line">        delay(<span class="number">1000</span>)</span><br><span class="line">        Log.d(<span class="string">"Debug"</span>, <span class="string">"launch 1"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    launch &#123;</span><br><span class="line">        delay(<span class="number">100</span>)</span><br><span class="line">        Log.d(<span class="string">"Debug"</span>, <span class="string">"launch 2"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>可挂起的方法采用CPS(Continuation-Passing-Style)实现，每一个可挂起的方法被调用的时候都会被隐式的传递一个Continuation参数来表示后续的操作。</p>
+<p>采用Continuation则是一种函数调用方式，它不采用堆栈来保存上下文，而是把这些信息保存在continuation record中。这些continuation record和堆栈的activation record的区别在于，它不采用后入先出的线性方式，所有record被组成一棵树（或者图），从一个函数调用另一个函数就等于给当前节点生成一个子节点，然后把系统寄存器移动到这个子节点。一个函数的退出等于从当前节点退回到父节点。<br>最大的好处就是，它可以让你从任意一个节点跳到另一个节点。而不必遵循堆栈方式的一层一层的return方式。比如说，在当前的函数内，你只要有一个其它函数的节点信息，完全可以选择return到那个函数，而不是循规蹈矩地返回到自己的调用者。你也可以在一个函数的任何位置储存自己的上下文信息，然后，在以后某个适当的时刻，从其它的任何一个函数里面返回到自己现在的位置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">val a = a()</span><br><span class="line">val y = foo(a).await() <span class="comment">// suspension point #1</span></span><br><span class="line">b()</span><br><span class="line">val z = bar(a, y).await() <span class="comment">// suspension point #2</span></span><br><span class="line">c(z)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> &lt;<span class="title">anonymous_for_state_machine</span>&gt; <span class="keyword">extends</span> <span class="title">SuspendLambda</span>&lt;...&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// The current state of the state machine</span></span><br><span class="line">    <span class="keyword">int</span> label = <span class="number">0</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// local variables of the coroutine</span></span><br><span class="line">    A a = <span class="keyword">null</span></span><br><span class="line">    Y y = <span class="keyword">null</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">resumeWith</span><span class="params">(Object result)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (label == <span class="number">0</span>) goto L0</span><br><span class="line">        <span class="keyword">if</span> (label == <span class="number">1</span>) goto L1</span><br><span class="line">        <span class="keyword">if</span> (label == <span class="number">2</span>) goto L2</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">throw</span> IllegalStateException()</span><br><span class="line">        </span><br><span class="line">      L0:</span><br><span class="line">        <span class="comment">// result is expected to be `null` at this invocation</span></span><br><span class="line">        a = a()</span><br><span class="line">        label = <span class="number">1</span></span><br><span class="line">        result = foo(a).await(<span class="keyword">this</span>) <span class="comment">// 'this' is passed as a continuation </span></span><br><span class="line">        <span class="keyword">if</span> (result == COROUTINE_SUSPENDED) <span class="keyword">return</span> <span class="comment">// return if await had suspended execution</span></span><br><span class="line">      L1:</span><br><span class="line">        <span class="comment">// external code has resumed this coroutine passing the result of .await() </span></span><br><span class="line">        y = (Y) result</span><br><span class="line">        b()</span><br><span class="line">        label = <span class="number">2</span></span><br><span class="line">        result = bar(a, y).await(<span class="keyword">this</span>) <span class="comment">// 'this' is passed as a continuation</span></span><br><span class="line">        <span class="keyword">if</span> (result == COROUTINE_SUSPENDED) <span class="keyword">return</span> <span class="comment">// return if await had suspended execution</span></span><br><span class="line">      L2:</span><br><span class="line">        <span class="comment">// external code has resumed this coroutine passing the result of .await()</span></span><br><span class="line">        Z z = (Z) result</span><br><span class="line">        c(z)</span><br><span class="line">        label = -<span class="number">1</span> <span class="comment">// No more steps are allowed</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;          </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="ViewModel支持的协程"><a href="#ViewModel支持的协程" class="headerlink" title="ViewModel支持的协程"></a>ViewModel支持的协程</h1><p><a href="https://craigrussell.io/2019/03/coroutine-support-in-viewmodels-using-the-new-viewmodelscope-extension-property/" target="_blank" rel="noopener">https://craigrussell.io/2019/03/coroutine-support-in-viewmodels-using-the-new-viewmodelscope-extension-property/</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md#coroutine-context" target="_blank" rel="noopener">https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md#coroutine-context</a><br><a href="https://www.cnblogs.com/cheukyin/p/6444860.html" target="_blank" rel="noopener">https://www.cnblogs.com/cheukyin/p/6444860.html</a></p>
 
       
     </div>
@@ -465,8 +472,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/21/Android事件分发机制详解/" rel="next" title="Android事件分发机制详解">
-                <i class="fa fa-chevron-left"></i> Android事件分发机制详解
+              <a href="/2018/11/11/代理模式/" rel="next" title="代理模式">
+                <i class="fa fa-chevron-left"></i> 代理模式
               </a>
             
           </div>
@@ -475,8 +482,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/09/19/最大差值问题/" rel="prev" title="最大差值问题">
-                最大差值问题 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/16/Android共享元素动画原理解析/" rel="prev" title="Android共享元素动画原理解析">
+                Android共享元素动画原理解析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -622,7 +629,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#线程池简介"><span class="nav-number">1.</span> <span class="nav-text">线程池简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ThreadPoolExecutor"><span class="nav-number">2.</span> <span class="nav-text">ThreadPoolExecutor</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四种线程池"><span class="nav-number">3.</span> <span class="nav-text">四种线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FixedThreadPool"><span class="nav-number">3.0.1.</span> <span class="nav-text">FixedThreadPool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CachedThreadPool"><span class="nav-number">3.0.2.</span> <span class="nav-text">CachedThreadPool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ScheduledThreadPool"><span class="nav-number">3.0.3.</span> <span class="nav-text">ScheduledThreadPool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SingleThreadExecutor"><span class="nav-number">3.0.4.</span> <span class="nav-text">SingleThreadExecutor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行任务"><span class="nav-number">3.0.5.</span> <span class="nav-text">执行任务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#执行Runnable"><span class="nav-number">3.0.5.1.</span> <span class="nav-text">执行Runnable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行Callable"><span class="nav-number">3.0.5.2.</span> <span class="nav-text">执行Callable</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#协程是什么"><span class="nav-number">1.</span> <span class="nav-text">协程是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#协程的优势"><span class="nav-number">2.</span> <span class="nav-text">协程的优势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kotlin标准库提供的基本的元素-操作"><span class="nav-number">3.</span> <span class="nav-text">kotlin标准库提供的基本的元素/操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#suspend-关键字"><span class="nav-number">3.1.</span> <span class="nav-text">suspend 关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CoroutineContext"><span class="nav-number">3.2.</span> <span class="nav-text">CoroutineContext</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Continuation"><span class="nav-number">3.3.</span> <span class="nav-text">Continuation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ContinuationInterceptor"><span class="nav-number">3.4.</span> <span class="nav-text">ContinuationInterceptor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建和启动协程"><span class="nav-number">3.5.</span> <span class="nav-text">创建和启动协程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂起-恢复协程"><span class="nav-number">3.6.</span> <span class="nav-text">挂起/恢复协程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlinx提供的协程库"><span class="nav-number">4.</span> <span class="nav-text">Kotlinx提供的协程库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">5.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ViewModel支持的协程"><span class="nav-number">6.</span> <span class="nav-text">ViewModel支持的协程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>

@@ -89,7 +89,7 @@
 <meta property="og:image" content="http://yoursite.com/images/shared3.png">
 <meta property="og:image" content="http://yoursite.com/images/shared4.png">
 <meta property="og:image" content="http://yoursite.com/images/shared5.gif">
-<meta property="og:updated_time" content="2019-09-16T15:29:07.982Z">
+<meta property="og:updated_time" content="2019-09-17T12:11:18.478Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android共享元素动画原理解析">
 <meta name="twitter:description" content="Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。之前在项目中用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源码，下图为实现效果。  P">
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  30
+                  29
                 </span>
               
             </div>
@@ -414,9 +414,8 @@
 
       
         <p>Andriod 5.0及之后开始支持Activity之间的共享元素动画，共享元素即启动Activity的时候，Activity A中的控件能够通过动画的方式流畅的过渡到Activity B中对应的控件。<br>之前在项目中用到了共享元素动画，遇到了一些坑，碍于不了解底层原理&amp;时间紧迫，实现的效果并不完美。最近得空带着一些疑惑阅读了一波源码，本文将带着这些问题来一步步解析源码，下图为实现效果。</p>
-<center><img src="/images/shared1.gif" width="200px"></center>
-PS:本文源码基于android-28
-
+<!-- <center><img src="/images/shared1.gif" width="200px" /></center> -->
+<p><img src="/images/shared1.gif" alt><br>PS:本文源码基于android-28</p>
 <h2 id="使用共享元素动画"><a href="#使用共享元素动画" class="headerlink" title="使用共享元素动画"></a>使用共享元素动画</h2><p>使用共享元素动画很简单，只需要三步</p>
 <ol>
 <li>通过给两个Activity设定<code>Window.FEATURE_CONTENT_TRANSITIONS</code>来启用transition api</li>
@@ -431,8 +430,8 @@ PS:本文源码基于android-28
 
 <p>我们可以在被启动的Activity的onCreate方法中调用<code>supportPostponeEnterTransition()</code>来延迟动画的执行，并在我们认为时机到了的时候(View被正常绘制后)调用<code>supportStartPostponedEnterTransition()</code>来开始执行共享元素动画。</p>
 <h2 id="共享元素动画大致流程"><a href="#共享元素动画大致流程" class="headerlink" title="共享元素动画大致流程"></a>共享元素动画大致流程</h2><p>本节大致介绍一下从startActivity到动画执行完毕的过程中发生了什么事情，以便对共享元素动画有一个大致的认识，这样更加有利于理解后续的源码解析。<br>首先引入五个类，这五个类承担共享元素动画的大部分逻辑。</p>
-<p class="img-tip" data-str="image.png"><img src="/images/shared2.png" height="250/"></p>
-
+<!-- <p class="img-tip" data-str="image.png"><img src='/images/shared2.png' height=250/></p> -->
+<p><img src="/images/shared2.png" alt></p>
 <ul>
 <li><strong>ResultReceiver</strong>：ResultReceiver是一个用来接收其他进程回调结果的通用接口。要使用它，需要创建一个子类并且实现<code>onReceiveResult(int, android.os.Bundle)</code>方法，在其他线程（进程）中可以通过<code>send(int, android.os.Bundle)</code>方法发送数据，底层实现是对Binder的简单封装</li>
 <li><strong>ActivityTransitionCoordinator</strong>：继承自ResultReceiver，是ExitTransitionCoordinator 和 EnterTransitionCoordinator的基类,负责管理Activity的动画和Activity之间的通信</li>
@@ -460,9 +459,8 @@ PS:本文源码基于android-28
 </ul>
 </li>
 <li>ExitTransitionCoordinator同时发送<code>MSG_EXIT_TRANSITION_COMPLETE</code>给EnterTransitionCoordinator，通知它可以开始EnterTransition动画(不是SharedEnterTransitino)</li>
-<li>动画结束后Activity A回调<code>onStop()</code>触发被隐藏的Views恢复显示<p class="img-tip" data-str="image.png"><img src="/images/shared3.png" height="250/"></p>
-
-</li>
+<li>动画结束后Activity A回调<code>onStop()</code>触发被隐藏的Views恢复显示<!-- <p class="img-tip" data-str="image.png"><img src='/images/shared3.png' height=250/></p> -->
+<img src="/images/shared3.png" alt></li>
 </ol>
 <h2 id="Activity-A的Shared-Views是怎么传递给Activity-B的"><a href="#Activity-A的Shared-Views是怎么传递给Activity-B的" class="headerlink" title="Activity A的Shared Views是怎么传递给Activity B的"></a>Activity A的Shared Views是怎么传递给Activity B的</h2><p>其实传递View这种说法并不准确，准确来说是将View的相关参数传递给Activity B，使得Activity B可以根据这些参数来构造出和Activity A上一样的View。<br>首先ExitTransitionCoordinator会在构造方法中调用父类的<code>viewsReady(mapSharedElements(accepted, mapped))</code>方法来收集当前Activity参与共享元素动画的所有View，并赋值给mSharedElements和mSharedElementNames，分别表示共享元素View和对应Name的集合，同时获取当前Activity中所有可见性为Visible的View并赋值给mTransitionViews</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ExitTransitionCoordinator.java</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> ArrayMap&lt;String, View&gt; <span class="title">mapSharedElements</span><span class="params">(ArrayList&lt;String&gt; accepted,</span></span></span><br><span class="line"><span class="function"><span class="params">        ArrayList&lt;View&gt; localViews)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (decorView != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 遍历child获得所有transitionName不为空且Visible的View</span></span><br><span class="line">        decorView.findNamedViews(sharedElements);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> sharedElements;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">viewsReady</span><span class="params">(ArrayMap&lt;String, View&gt; sharedElements)</span> </span>&#123;</span><br><span class="line">    sharedElements.retainAll(mAllSharedElementNames);</span><br><span class="line">    <span class="keyword">if</span> (mListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">        mListener.onMapSharedElements(mAllSharedElementNames, sharedElements);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 将mSharedElements和mSharedElementNames赋值</span></span><br><span class="line">    setSharedElements(sharedElements);</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (decorView != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 获取所有Visibile的View到mTransitioningViews中</span></span><br><span class="line">        decorView.captureTransitioningViews(mTransitioningViews);</span><br><span class="line">    &#125;</span><br><span class="line">    mTransitioningViews.removeAll(mSharedElements);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -479,14 +477,96 @@ PS:本文源码基于android-28
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// View.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transformMatrixToGlobal</span><span class="params">(Matrix m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ViewParent parent = mParent;</span><br><span class="line">    <span class="keyword">if</span> (parent <span class="keyword">instanceof</span> View) &#123;</span><br><span class="line">        <span class="keyword">final</span> View vp = (View) parent;</span><br><span class="line">        vp.transformMatrixToGlobal(m);</span><br><span class="line">        m.preTranslate(-vp.mScrollX, -vp.mScrollY);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (parent <span class="keyword">instanceof</span> ViewRootImpl) &#123;</span><br><span class="line">        <span class="keyword">final</span> ViewRootImpl vr = (ViewRootImpl) parent;</span><br><span class="line">        vr.transformMatrixToGlobal(m);</span><br><span class="line">        m.preTranslate(<span class="number">0</span>, -vr.mCurScrollY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    m.preTranslate(mLeft, mTop);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里将m前乘view.getMatrix是为了避免本身自带的Matrix造成的误差</span></span><br><span class="line">    <span class="keyword">if</span> (!hasIdentityMatrix()) &#123;</span><br><span class="line">        m.preConcat(getMatrix());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ViewRootImpl.java</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">transformMatrixToGlobal</span><span class="params">(Matrix m)</span> </span>&#123;</span><br><span class="line">    m.preTranslate(mAttachInfo.mWindowLeft, mAttachInfo.mWindowTop);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>我们查看<code>View#transformMatrixToGlobal()</code>方法可以看出内部是向上遍历调用Parent的<code>transformMatrixToGlobal</code>方法直到ViewRootImpl，然后将由Parent处理后的Matrix做<code>preTranslate(mLeft, mTop)</code>操作，而<code>ViewRootImpl#transformMatrixToGlobal</code>方法也是对Metrix做preTranslate，距离是当前Window在屏幕上的left/top，所以一般来说该方法返回的是所有Parent的preTranslate(mLeft, mTop)叠加结果，返回的Matrix为</p>
-<p>$$<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; leftOnScreen \<br>   0 &amp; 1 &amp; topOnScreen \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>$$</p>
+
+$$
+\left\{
+ \begin{matrix}
+   1 & 0 & leftOnScreen \\
+   0 & 1 & topOnScreen \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+$$
+
+
 <p>其中leftOnScreen和topOnScreen就是该View距离屏幕的左边/上边的距离。<br>但是真实情况返回Matrix的不一定是这样，因为View自身的Matrix可能并不是一个单位矩阵(设置过scale/rotation等)，所以在拿到处理过的matrix后还需要做一次变换</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (!hasIdentityMatrix()) &#123;</span><br><span class="line">    m.preConcat(getMatrix());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>将这样处理后的Matrix作用于<code>rect = [0, 0, view.getWidth(), view.getHeight()]</code>的矩形就能够得到<strong>视觉上</strong>该View在屏幕上的坐标。</p>
-<p class="img-tip" data-str="image.png"><img src="/images/shared4.png" height="540" width="864/"></p>
+<!-- <p class="img-tip" data-str="image.png"><img src='/images/shared4.png' height=540 width=864/></p> -->
+<p><img src="/images/shared4.png" alt></p>
+<p>我们举个例子来说明这个方法，假设图中A代表屏幕，B为一个ViewGroup，左上角在A中的坐标为(100, 100)，C长宽均为100，是B的child view，左上角在B中的坐标是(50, 50)，同时C设置了transaltion，x、y均偏移25也就是图中灰色的区域(绿色区域为C的真实位置)。C的<code>transformMatrixToGlobal</code>方法中首先获取到Parent也就是B的Matrix，得到的是x、y偏移100的矩阵</p>
 
-<p>我们举个例子来说明这个方法，假设图中A代表屏幕，B为一个ViewGroup，左上角在A中的坐标为(100, 100)，C长宽均为100，是B的child view，左上角在B中的坐标是(50, 50)，同时C设置了transaltion，x、y均偏移25也就是图中灰色的区域(绿色区域为C的真实位置)。C的<code>transformMatrixToGlobal</code>方法中首先获取到Parent也就是B的Matrix，得到的是x、y偏移100的矩阵<br>$$<br>B=<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; 100 \<br>   0 &amp; 1 &amp; 100 \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>$$<br>随后将矩阵B偏移C在Parent中的left/top<br>$$<br>C=<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; 100 \<br>   0 &amp; 1 &amp; 100 \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>*<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; 50 \<br>   0 &amp; 1 &amp; 50 \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>=<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; 150 \<br>   0 &amp; 1 &amp; 150 \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>$$<br>因为C本身设置了translation，所以自身有一个非单位矩阵，将C乘以该矩阵得到最终的矩阵C2<br>$$<br>C2=<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; 150 \<br>   0 &amp; 1 &amp; 150 \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>*<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; 25 \<br>   0 &amp; 1 &amp; 25 \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>=<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; 175 \<br>   0 &amp; 1 &amp; 175 \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>$$<br>可以看出该矩阵的作用就是将坐标在x、y方向上移动175的距离，将该矩阵作用于长宽与C一样的矩形(0, 0, 100, 100)得到的就是我们看到的灰色区域，所以该方法最后得到的就是我们所能看到的View在屏幕上的坐标(而不是真正的坐标)。</p>
+$$
+B=
+\left\{
+ \begin{matrix}
+   1 & 0 & 100 \\
+   0 & 1 & 100 \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+$$
+
+<p>随后将矩阵B偏移C在Parent中的left/top</p>
+
+$$
+C=
+\left\{
+ \begin{matrix}
+   1 & 0 & 100 \\
+   0 & 1 & 100 \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+*
+\left\{
+ \begin{matrix}
+   1 & 0 & 50 \\
+   0 & 1 & 50 \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+=
+\left\{
+ \begin{matrix}
+   1 & 0 & 150 \\
+   0 & 1 & 150 \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+$$
+
+<p>因为C本身设置了translation，所以自身有一个非单位矩阵，将C乘以该矩阵得到最终的矩阵C2</p>
+
+$$
+C2=
+\left\{
+ \begin{matrix}
+   1 & 0 & 150 \\
+   0 & 1 & 150 \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+*
+\left\{
+ \begin{matrix}
+   1 & 0 & 25 \\
+   0 & 1 & 25 \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+=
+\left\{
+ \begin{matrix}
+   1 & 0 & 175 \\
+   0 & 1 & 175 \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+$$
+
+<p>可以看出该矩阵的作用就是将坐标在x、y方向上移动175的距离，将该矩阵作用于长宽与C一样的矩形(0, 0, 100, 100)得到的就是我们看到的灰色区域，所以该方法最后得到的就是我们所能看到的View在屏幕上的坐标(而不是真正的坐标)。</p>
 <p>看到这里大家一定有一个疑问，为什么不直接用getLocationOnScreen方法？其实这两种方法是有差别的。一方面getLocationOnScreen只能获得该View左上角在屏幕中的坐标而无法获得View右下角在屏幕中的坐标，另一方面如果View或者View的Parent设置了rotation，那么就会导致getLocationOnScreen方法获取不准确，因为getLocationOnScreen方法内部实现是针对点来做矩阵变换的，这样就会导致带有rotation的矩阵将左上角的点(0, 0)进行旋转，进而导致结果不准确。而<code>transformMatrixToGlobal</code>方法直接返回作用的Matrix，我们将该Matrix作用在矩形上，就可以获取准确的坐标。<br>总结：Activity A传递给Activity B的是<strong>视觉上</strong>Shared Views在屏幕中的坐标。 </p>
 <h2 id="Activity-B的是怎么处理Activity-A传递的Bundle并实现动画"><a href="#Activity-B的是怎么处理Activity-A传递的Bundle并实现动画" class="headerlink" title="Activity B的是怎么处理Activity A传递的Bundle并实现动画"></a>Activity B的是怎么处理Activity A传递的Bundle并实现动画</h2><p>上文提到ExitTransitionCoordiantor的exit动画结束后会发送<code>MSG_TAKE_SHARED_ELEMENTS</code>给被启动Activity的EnterTransitionCoordinator通知它可以开始动画，在EnterTransitionCoordinator中将执行<code>startSharedElementTransition</code>方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// EnterTransitionCoordinator.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onReceiveResult</span><span class="params">(<span class="keyword">int</span> resultCode, Bundle resultData)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (resultCode) &#123;</span><br><span class="line">        <span class="keyword">case</span> MSG_TAKE_SHARED_ELEMENTS:</span><br><span class="line">            <span class="keyword">if</span> (!mIsCanceled) &#123;</span><br><span class="line">                mSharedElementsBundle = resultData;</span><br><span class="line">                onTakeSharedElements();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onTakeSharedElements</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!mIsReadyForTransition || mSharedElementsBundle == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> Bundle sharedElementState = mSharedElementsBundle;</span><br><span class="line">    mSharedElementsBundle = <span class="keyword">null</span>;</span><br><span class="line">    OnSharedElementsReadyListener listener = <span class="keyword">new</span> OnSharedElementsReadyListener() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSharedElementsReady</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">final</span> View decorView = getDecor();</span><br><span class="line">            <span class="keyword">if</span> (decorView != <span class="keyword">null</span>) &#123;</span><br><span class="line">                OneShotPreDrawListener.add(decorView, <span class="keyword">false</span>, () -&gt; &#123;</span><br><span class="line">                    startTransition(() -&gt; &#123;</span><br><span class="line">                            <span class="comment">// 将Activity A传递过来的带有View参数的bundle传递，并开始动画</span></span><br><span class="line">                            startSharedElementTransition(sharedElementState);</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;);</span><br><span class="line">                decorView.invalidate();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">if</span> (mListener == <span class="keyword">null</span>) &#123;</span><br><span class="line">        listener.onSharedElementsReady();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        mListener.onSharedElementsArrived(mSharedElementNames, mSharedElements, listener);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -503,7 +583,19 @@ PS:本文源码基于android-28
 <p>这里又涉及到一些矩阵知识了，首先是拿到Activity A传过来的View的left/top/right/bottom参数(在屏幕上的)，这里我们是不能直接设置给Activity B的View，因为Activity B的View依赖于它的Parent，所以我们首先将屏幕上的坐标转换为在Parent中的坐标，通过<code>getSharedElementParentMatrix(view, tempMatrix)</code>来拿到转换的Matrix对tempRect进行转换，我们看看getSharedElementParentMatrix的实现</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// EnterTransitionCoordinator.java</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">getSharedElementParentMatrix</span><span class="params">(View view, Matrix matrix)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> index = mSharedElementParentMatrices == <span class="keyword">null</span> ? -<span class="number">1</span></span><br><span class="line">            : mSharedElements.indexOf(view);</span><br><span class="line">    <span class="keyword">if</span> (index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        matrix.reset();</span><br><span class="line">        ViewParent viewParent = view.getParent();</span><br><span class="line">        <span class="keyword">if</span> (viewParent <span class="keyword">instanceof</span> ViewGroup) &#123;</span><br><span class="line">            <span class="comment">// Find the location in the view's parent</span></span><br><span class="line">            ViewGroup parent = (ViewGroup) viewParent;</span><br><span class="line">            parent.transformMatrixToLocal(matrix);</span><br><span class="line">            matrix.postTranslate(parent.getScrollX(), parent.getScrollY());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// The indices of mSharedElementParentMatrices matches the</span></span><br><span class="line">        <span class="comment">// mSharedElement matrices.</span></span><br><span class="line">        Matrix parentMatrix = mSharedElementParentMatrices.get(index);</span><br><span class="line">        matrix.set(parentMatrix);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>通过调用<strong>Parent</strong>的<code>transformMatrixToLocal</code>方法来获得转换矩阵，这和之前提到的<code>transformMatrixToGlobal</code>方法实现非常相似，这里说结论，<code>transformMatrixToLocal</code>返回的Matrix和<code>transformMatrixToGlobal</code>相反，一般返回的Matrix如下所示(除去View自身Matrix的影响的话)<br>$$<br>\left{<br> \begin{matrix}<br>   1 &amp; 0 &amp; -leftOnScreen \<br>   0 &amp; 1 &amp; -topOnScreen \<br>   0 &amp; 0 &amp; 1 \<br> \end{matrix}<br>\right}<br>$$<br>其中leftOnScreen和topOnScreen就是该Parent距离屏幕的左/上的距离。经过此Matrix转换后tempRect的坐标就是我们所期望的View在Parent中的坐标了，但是仍然不能直接设置给View！如果假设View本身设置过Scale=2，那么当将计算后的坐标设置给View时会在正常大小上再作用一个Scale=2，显示的效果就是预期的两倍，所以我们还需要以下操作：</p>
+<p>通过调用<strong>Parent</strong>的<code>transformMatrixToLocal</code>方法来获得转换矩阵，这和之前提到的<code>transformMatrixToGlobal</code>方法实现非常相似，这里说结论，<code>transformMatrixToLocal</code>返回的Matrix和<code>transformMatrixToGlobal</code>相反，一般返回的Matrix如下所示(除去View自身Matrix的影响的话)</p>
+
+$$
+\left\{
+ \begin{matrix}
+   1 & 0 & -leftOnScreen \\
+   0 & 1 & -topOnScreen \\
+   0 & 0 & 1 \\
+ \end{matrix} 
+\right\}
+$$
+
+<p>其中leftOnScreen和topOnScreen就是该Parent距离屏幕的左/上的距离。经过此Matrix转换后tempRect的坐标就是我们所期望的View在Parent中的坐标了，但是仍然不能直接设置给View！如果假设View本身设置过Scale=2，那么当将计算后的坐标设置给View时会在正常大小上再作用一个Scale=2，显示的效果就是预期的两倍，所以我们还需要以下操作：</p>
 <ol>
 <li>计算我们需要设置的真正width/height：通过拿到View的逆矩阵应用到tempRect上可以得到我们实际需要设置的width/height</li>
 <li>计算真正的left/top：之前我们已经计算出视觉上我们的View在Parent中的left和top，但是因为View自身的Matrix影响，我们需要计算出该矩阵应用于矩形后会导致矩形的left/top相比原来偏移多少，然后在设置left/top的时候减去这个偏差<h3 id="调整Shared-Views为最终状态"><a href="#调整Shared-Views为最终状态" class="headerlink" title="调整Shared Views为最终状态"></a>调整Shared Views为最终状态</h3>共享元素动画使用的是Transition框架，我们只要调整View的状态，就可以自动捕获初始状态/结束状态来生成动画，所以后面要做的就是将SharedViews调整成最初的状态(也就是在Activity B中的最终状态)。从上面的<code>startSharedElementTransition</code>实现来看，首先调用<code>beginTransition</code>方法，内部调用了<code>TransitionManager.beginDelayedTransition(decorView, transition)</code>来开始动画，随后调用<code>setOriginalSharedElementState(mSharedElements, originalImageViewState)</code>来将Shared Views设置为最终状态，我们来看下这个方法的实现<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// EnterTransitionCoordinator.java</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setOriginalSharedElementState</span><span class="params">(ArrayList&lt;View&gt; sharedElements,</span></span></span><br><span class="line"><span class="function"><span class="params">        ArrayList&lt;SharedElementOriginalState&gt; originalState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; originalState.size(); i++) &#123;</span><br><span class="line">        View view = sharedElements.get(i);</span><br><span class="line">        SharedElementOriginalState state = originalState.get(i);</span><br><span class="line">        <span class="comment">// 忽略对ImageView的特殊处理</span></span><br><span class="line">        ...</span><br><span class="line">        view.setElevation(state.mElevation);</span><br><span class="line">        view.setTranslationZ(state.mTranslationZ);</span><br><span class="line">        <span class="keyword">int</span> widthSpec = View.MeasureSpec.makeMeasureSpec(state.mMeasuredWidth,</span><br><span class="line">                View.MeasureSpec.EXACTLY);</span><br><span class="line">        <span class="keyword">int</span> heightSpec = View.MeasureSpec.makeMeasureSpec(state.mMeasuredHeight,</span><br><span class="line">                View.MeasureSpec.EXACTLY);</span><br><span class="line">        view.measure(widthSpec, heightSpec);</span><br><span class="line">        view.layout(state.mLeft, state.mTop, state.mRight, state.mBottom);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -559,8 +651,8 @@ PS:本文源码基于android-28
 
 <p>这样就可以达到将Button加入到SharedElement中去的目的了，viewsReady中随后会调用<code>moveSharedElementsToOverlay()</code>将SharedView显示到ViewOverlay中去。</p>
 <h3 id="Button会参与共享元素动画吗"><a href="#Button会参与共享元素动画吗" class="headerlink" title="Button会参与共享元素动画吗"></a>Button会参与共享元素动画吗</h3><p>结论是不会，它只会在共享元素动画结束后和其余View一样通过调用<code>moveSharedElementsFromOverlay()</code>返回到正常布局中去。通过之前的分析可以知道是通过setSharedElementState方法将View设置为初始状态的，在该方法中首先通过transitinName从Activity A传递过来的bundle中获取参数，如果获取不到就直接return。Button是我们强行加入的，Activity A传递的bundle中自然没有，所以Button不会做任何改变，效果如下</p>
-<center><img src="/images/shared5.gif" width="200px"></center>
-
+<!-- <center><img src="/images/shared5.gif" width="200px" /></center> -->
+<p><img src="/images/shared5.gif" alt></p>
 <h2 id="返回动画的流程"><a href="#返回动画的流程" class="headerlink" title="返回动画的流程"></a>返回动画的流程</h2><p>返回和进入的核心流程很相似，但是更加简单。首先我们需要调用<code>Activity#finishAfterTransition()</code>方法来触发返回的动画，其内部调用了<code>ActivityTransitionState#startExitBackTransition()</code>方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">startExitBackTransition</span><span class="params">(<span class="keyword">final</span> Activity activity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mEnteringNames == <span class="keyword">null</span> || mCalledExitCoordinator != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!mHasExited) &#123;</span><br><span class="line">            ...</span><br><span class="line">            mReturnExitCoordinator = <span class="keyword">new</span> ExitTransitionCoordinator(activity,</span><br><span class="line">                    activity.getWindow(), activity.mEnterTransitionListener, mEnteringNames,</span><br><span class="line">                    <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">true</span>);</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">if</span> (delayExitBack &amp;&amp; decor != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">final</span> ViewGroup finalDecor = decor;</span><br><span class="line">                OneShotPreDrawListener.add(decor, () -&gt; &#123;</span><br><span class="line">                    <span class="keyword">if</span> (mReturnExitCoordinator != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        mReturnExitCoordinator.startExit(activity.mResultCode,</span><br><span class="line">                                activity.mResultData);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                mReturnExitCoordinator.startExit(activity.mResultCode, activity.mResultData);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -599,8 +691,8 @@ PS:本文源码基于android-28
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/11/11/代理模式/" rel="next" title="代理模式">
-                <i class="fa fa-chevron-left"></i> 代理模式
+              <a href="/2019/03/21/kotlin协程/" rel="next" title="kotlin协程">
+                <i class="fa fa-chevron-left"></i> kotlin协程
               </a>
             
           </div>
@@ -690,7 +782,7 @@ PS:本文源码基于android-28
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">31</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -701,7 +793,7 @@ PS:本文源码基于android-28
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -786,7 +878,7 @@ PS:本文源码基于android-28
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">31.5k</span>
+    <span title="Site words total count">32.8k</span>
   
 </div>
 
