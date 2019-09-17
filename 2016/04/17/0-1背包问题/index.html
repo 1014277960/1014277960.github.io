@@ -77,17 +77,17 @@
 
 
 
-<meta name="description" content="1.问题描述 有n个物品，第i个物品的体积和价值分别为w[i]、vi，现有一个容量为c的背包，将这些物品选择装入该背包，如何选择使得包里的物品价值总和最大。 2.问题分析 定义函数f[i][w]表示从前i件物品中选择放入容量为w的背包能装下的物品最大价值，我们所要求的就是f[n][c]。以n为例，有两种情况: a. 如果w[n]&amp;gt;c，那么n就不能选中，即f[n][c] = f[n-1][c]">
+<meta name="description" content="1.问题描述 有n个物品，第i个物品的体积和价值分别为w[i]、v[i](1&amp;lt;= i &amp;lt;=n)，现有一个容量为c的背包，将这些物品选择装入该背包，如何选择使得包里的物品价值总和最大。 2.问题分析 定义函数f[i][w]表示从前i件物品中选择放入容量为w的背包能装下的物品最大价值，我们所要求的就是f[n][c]。以n为例，有两种情况: a. 如果w[n]&amp;gt;c，那么n就不能选中，即">
 <meta property="og:type" content="article">
 <meta property="og:title" content="0-1背包问题">
 <meta property="og:url" content="http://yoursite.com/2016/04/17/0-1背包问题/index.html">
 <meta property="og:site_name" content="干就完事了">
-<meta property="og:description" content="1.问题描述 有n个物品，第i个物品的体积和价值分别为w[i]、vi，现有一个容量为c的背包，将这些物品选择装入该背包，如何选择使得包里的物品价值总和最大。 2.问题分析 定义函数f[i][w]表示从前i件物品中选择放入容量为w的背包能装下的物品最大价值，我们所要求的就是f[n][c]。以n为例，有两种情况: a. 如果w[n]&amp;gt;c，那么n就不能选中，即f[n][c] = f[n-1][c]">
+<meta property="og:description" content="1.问题描述 有n个物品，第i个物品的体积和价值分别为w[i]、v[i](1&amp;lt;= i &amp;lt;=n)，现有一个容量为c的背包，将这些物品选择装入该背包，如何选择使得包里的物品价值总和最大。 2.问题分析 定义函数f[i][w]表示从前i件物品中选择放入容量为w的背包能装下的物品最大价值，我们所要求的就是f[n][c]。以n为例，有两种情况: a. 如果w[n]&amp;gt;c，那么n就不能选中，即">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-09-15T03:57:59.791Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="0-1背包问题">
-<meta name="twitter:description" content="1.问题描述 有n个物品，第i个物品的体积和价值分别为w[i]、vi，现有一个容量为c的背包，将这些物品选择装入该背包，如何选择使得包里的物品价值总和最大。 2.问题分析 定义函数f[i][w]表示从前i件物品中选择放入容量为w的背包能装下的物品最大价值，我们所要求的就是f[n][c]。以n为例，有两种情况: a. 如果w[n]&amp;gt;c，那么n就不能选中，即f[n][c] = f[n-1][c]">
+<meta name="twitter:description" content="1.问题描述 有n个物品，第i个物品的体积和价值分别为w[i]、v[i](1&amp;lt;= i &amp;lt;=n)，现有一个容量为c的背包，将这些物品选择装入该背包，如何选择使得包里的物品价值总和最大。 2.问题分析 定义函数f[i][w]表示从前i件物品中选择放入容量为w的背包能装下的物品最大价值，我们所要求的就是f[n][c]。以n为例，有两种情况: a. 如果w[n]&amp;gt;c，那么n就不能选中，即">
 
 
 
@@ -370,7 +370,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  623
+                  629
                 </span>
               
 
@@ -386,7 +386,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  3
                 </span>
               
             </div>
@@ -408,15 +408,21 @@
 
       
         <p>1.问题描述</p>
-<p>有n个物品，第i个物品的体积和价值分别为w[i]、v<a href="1&lt;= i &lt;=n">i</a>，现有一个容量为c的背包，将这些物品选择装入该背包，如何选择使得包里的物品价值总和最大。</p>
+<p>有n个物品，第i个物品的体积和价值分别为w[i]、v[i](1&lt;= i &lt;=n)，现有一个容量为c的背包，将这些物品选择装入该背包，如何选择使得包里的物品价值总和最大。</p>
 <p>2.问题分析</p>
 <p>定义函数f[i][w]表示从前i件物品中选择放入容量为w的背包能装下的物品最大价值，我们所要求的就是f[n][c]。以n为例，有两种情况:</p>
 <p>a. 如果w[n]&gt;c，那么n就不能选中，即f[n][c] = f[n-1][c]</p>
 <p>b. 如果w[n] &lt;= c, 那么n有可能选中也可能没有选中，依据就是判断选中和不选中的结果哪个大酒根据那一个，即比较f[n-1][c-w[n]]+v[n]和f[n-1][c]</p>
 <p>3.编写代码</p>
-<p>在解决该问题时因为每一个f都依赖上一个结果，所以需要从最小的f开始向上计算，得到结果，易得f[0][i] f[i][0]都是0，我们需要从0开始计算出所有f[][]<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//i表示从前i项选择，j表示容量</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= c; j++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (w[i] &gt; j) &#123;</span><br><span class="line">            f[i][j] = f[i - <span class="number">1</span>][j];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            f[i][j] = max(f[i - <span class="number">1</span>][j], f[i - <span class="number">1</span>][j - w[i]] + v[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>完整代码如下<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">knapsack</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> c, <span class="keyword">int</span> v[], <span class="keyword">int</span> w[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> f[<span class="number">1001</span>][<span class="number">1001</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= c; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (w[i] &gt; j) &#123;</span><br><span class="line">                f[i][j] = f[i - <span class="number">1</span>][j];</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                f[i][j] = max(f[i - <span class="number">1</span>][j], f[i - <span class="number">1</span>][j - w[i]] + v[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f[n][c];</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> n, v[<span class="number">1001</span>];</span><br><span class="line">    <span class="keyword">int</span> c, w[<span class="number">1001</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; n &gt;&gt; c) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            <span class="built_in">cin</span> &gt;&gt; w[i] &gt;&gt; v[i];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; knapsack(n, c, v, w) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果想得到选择的具体情况可以通过f[i][c]-f[i-1][c]的值判断,如果f[i][c]&gt;f[i-1][c],那么就是选取了第i个，接下来就要判断f[i - 1][c - w[i]] 和f[i - 2][c - w[i]]，注意i从大到小判断，遇到被选中的，加下来的判断就要减去这个重量<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> w = totalWeight;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = n; i != <span class="number">0</span>; i--) &#123;</span><br><span class="line">    <span class="keyword">if</span> (f[i][w] &gt; f[i - <span class="number">1</span>][w]) &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; i &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">	    w -= w[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在解决该问题时因为每一个f都依赖上一个结果，所以需要从最小的f开始向上计算，得到结果，易得f[0][i] f[i][0]都是0，我们需要从0开始计算出所有f[][]</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//i表示从前i项选择，j表示容量</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= c; j++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (w[i] &gt; j) &#123;</span><br><span class="line">            f[i][j] = f[i - <span class="number">1</span>][j];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            f[i][j] = max(f[i - <span class="number">1</span>][j], f[i - <span class="number">1</span>][j - w[i]] + v[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">knapsack</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> c, <span class="keyword">int</span> v[], <span class="keyword">int</span> w[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> f[<span class="number">1001</span>][<span class="number">1001</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= c; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (w[i] &gt; j) &#123;</span><br><span class="line">                f[i][j] = f[i - <span class="number">1</span>][j];</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                f[i][j] = max(f[i - <span class="number">1</span>][j], f[i - <span class="number">1</span>][j - w[i]] + v[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f[n][c];</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> n, v[<span class="number">1001</span>];</span><br><span class="line">    <span class="keyword">int</span> c, w[<span class="number">1001</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; n &gt;&gt; c) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            <span class="built_in">cin</span> &gt;&gt; w[i] &gt;&gt; v[i];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; knapsack(n, c, v, w) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果想得到选择的具体情况可以通过f[i][c]-f[i-1][c]的值判断,如果f[i][c]&gt;f[i-1][c],那么就是选取了第i个，接下来就要判断f[i - 1][c - w[i]] 和f[i - 2][c - w[i]]，注意i从大到小判断，遇到被选中的，加下来的判断就要减去这个重量</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> w = totalWeight;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = n; i != <span class="number">0</span>; i--) &#123;</span><br><span class="line">    <span class="keyword">if</span> (f[i][w] &gt; f[i - <span class="number">1</span>][w]) &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; i &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">	    w -= w[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -527,7 +533,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -538,7 +544,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -607,7 +613,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">32.8k</span>
+    <span title="Site words total count">35.1k</span>
   
 </div>
 

@@ -416,7 +416,8 @@
 <h3 id="Service与Thread"><a href="#Service与Thread" class="headerlink" title="Service与Thread"></a>Service与Thread</h3><p>虽说Service可以在后台执行任务，但是实际上一个Service是运行在主线程的，如果有耗时操作我们必须在Service中自己开启一个Thread避免ANR。那就会有这么一个问题，我们为什么不用Thread呢？主要的原因就是Thread的可控性不好，假设我们在一个Activity中启动了一个Thread，一旦这个Activity结束了，那么其他的Activity就没有办法拿到这个Thread的引用，更别谈控制了。可是Service不一样，一个Service整个程序只会创建一个实例，而且任何Activity都可以控制，那么Service里的Thread就可以由所有Activity控制了。而且Service作为四大组件之一，有较高级别，在后台运行不容易被系统杀掉。</p>
 <h2 id="Service分类"><a href="#Service分类" class="headerlink" title="Service分类"></a>Service分类</h2><p>Service分为两类</p>
 <ul>
-<li>Started Service：不和其他组件通信</li>
+<li><p>Started Service：不和其他组件通信</p>
+</li>
 <li><p>Bound Service：可以和其他组件通信</p>
 <p>无论使用哪一种Service都必须重写onBind()方法，如果使用Started Service返回null就可以了。</p>
 </li>
@@ -435,9 +436,12 @@
 <p>为了节省资源和电量，我们在任务结束后必须关闭Service，想要关闭Service可以通过本身调用stopSelf()或者其他组件调用stopService(),但是如果我们的Service处理多个onStartCommand请求的时候，我们在请求结束后掉用stopSelf()可能会打断已经收到的新的请求，最好的情况就是我们本身就是最后一个请求，stopSelt(int)的一个参数的重载可以解决这个方法，传入的id就是onStartCommand传递进来的id，代表当前任务的id，它会把传入的id和最后一个id比较，如果一样的话就代表本身是最后一个任务，就会stop掉，否则不会执行stop。</p>
 <h3 id="使用Bound-Service"><a href="#使用Bound-Service" class="headerlink" title="使用Bound Service"></a>使用Bound Service</h3><p>主要和Started Service的区别就是可以和其他组件通信，通过Binder。<br>创建时必须定义接口描述用户如何与Server交流，接口必须继承Binder。使用bindService()创建，必须提供一个ServiceConnection的实现，，bindService()是一个异步方法，立马回返回。当创建完后会调用ServiceConnection的onServiceConnected，并传递binder通信。onBind方法只在第一个用户连接调用，后来都返回同一个binder（因为只会有一个Service），代码如下</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Binder given to clients</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> IBinder mBinder = <span class="keyword">new</span> LocalBinder();</span><br><span class="line">    <span class="comment">// Random number generator</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Random mGenerator = <span class="keyword">new</span> Random();</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Class used for the client Binder.  Because we know this service always</span></span><br><span class="line"><span class="comment">     * runs in the same process as its clients, we don't need to deal with IPC.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalBinder</span> <span class="keyword">extends</span> <span class="title">Binder</span> </span>&#123;</span><br><span class="line">        <span class="function">LocalService <span class="title">getService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">// Return this instance of LocalService so clients can call public methods</span></span><br><span class="line">            <span class="keyword">return</span> LocalService.<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mBinder;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** method for clients */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getRandomNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> mGenerator.nextInt(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <p>bind service的代码如下</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> ServiceConnection mConnection = <span class="keyword">new</span> ServiceConnection() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName className,</span></span></span><br><span class="line"><span class="function"><span class="params">                IBinder service)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// We've bound to LocalService, cast the IBinder and get LocalService instance</span></span><br><span class="line">            LocalBinder binder = (LocalBinder) service;</span><br><span class="line">            mService = binder.getService();</span><br><span class="line">            mBound = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceDisconnected</span><span class="params">(ComponentName arg0)</span> </span>&#123;</span><br><span class="line">            mBound = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bindService(intent, mConnection, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
 <p>可以看出我们在Service中自定义了binder继承自Binder，并声明了一个方法，然后在onBind()中返回一个实例。我们会在onServiceConnected方法中得到这个binder，然后我们调用里的方法得到Service的实例，这样就可以掉用里面方法了，也就完成了通信。bindServicer第三个参数是刚开始的选择，如果是BIND_AUTO_CREATE表示如果没启动就新建</p>
 <h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>onServiceDisconnected方法不是unbind的时候调用的，实在被kill等意外情况调用的</p>
 
@@ -559,7 +563,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -570,7 +574,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -655,7 +659,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">32.8k</span>
+    <span title="Site words total count">35.1k</span>
   
 </div>
 
