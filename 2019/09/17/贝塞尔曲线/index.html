@@ -89,7 +89,7 @@
 <meta property="og:image" content="http://yoursite.com/images/bezier3.png">
 <meta property="og:image" content="http://yoursite.com/images/bezier4.gif">
 <meta property="og:image" content="http://yoursite.com/images/bezier5.png">
-<meta property="og:image" content="http://yoursite.com/images/bezier6.png">
+<meta property="og:image" content="http://yoursite.com/images/bezier6.gif">
 <meta property="og:image" content="http://yoursite.com/images/bezier7.png">
 <meta property="og:image" content="http://yoursite.com/images/bezier8.gif">
 <meta property="og:image" content="http://yoursite.com/images/bezier9.png">
@@ -100,7 +100,7 @@
 <meta property="og:image" content="http://yoursite.com/images/bezier14.png">
 <meta property="og:image" content="http://yoursite.com/images/bezier15.png">
 <meta property="og:image" content="http://yoursite.com/images/bezier16.png">
-<meta property="og:updated_time" content="2019-09-17T13:08:17.074Z">
+<meta property="og:updated_time" content="2019-09-17T13:11:04.330Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="贝塞尔曲线">
 <meta name="twitter:description" content="贝塞尔原理贝塞尔曲线(Bézier curve)，又称贝兹曲线，是应用于二维图形应用程序的数学曲线，贝塞尔曲线的运用十分广泛，可以说贝塞尔曲线奠定了计算机绘图的基础(因为它可以将任何复杂的图形用精确的数学语言进行描述)，接下来以二阶贝塞尔曲线为例介绍贝塞尔曲线的定义、性质。二阶曲线由两个数据点(P0 和 P2)，一个控制点(P1)来描述曲线状态，如图所示红色曲线就是二阶贝塞尔曲线推导过程如下  在">
@@ -442,7 +442,7 @@
 <li>贝塞尔曲线与P0P1、P1P2分别相切于P0、P2点</li>
 </ol>
 <p>三阶贝塞尔曲线如下如所示，构造过程和二阶类似<br><img src="/images/bezier4.gif" alt><br><img src="/images/bezier5.png" alt></p>
-<h1 id="应用一-实现粘性效果"><a href="#应用一-实现粘性效果" class="headerlink" title="应用一:实现粘性效果"></a>应用一:实现粘性效果</h1><p>使用贝塞尔曲线可以实现很多复杂的动画效果，这里介绍一种较为简单的小球粘性下拉动画，效果如下<br><img src="/images/bezier6.png" alt><br>首先我们定义小球可以下拉的最大高度为MAX_HEIGHT，当小球随手势向下拉动的时候通过当前的高度/MAX_HEIGHT计算出当前的进度progress，后面就通过progress来确定绘制所需要的所有点<br><img src="/images/bezier7.png" alt><br>如图所示在圆上取点e1，e1与圆心连城的直线与垂线夹角为θ。过e1做圆的切线交基准线L于c1点，取基准线上s1点和e1为数据点，c1为控制点做二阶贝塞尔曲线(右侧类似)即可实现粘性效果。其中随着progress从0到1变化过程中</p>
+<h1 id="应用一-实现粘性效果"><a href="#应用一-实现粘性效果" class="headerlink" title="应用一:实现粘性效果"></a>应用一:实现粘性效果</h1><p>使用贝塞尔曲线可以实现很多复杂的动画效果，这里介绍一种较为简单的小球粘性下拉动画，效果如下<br><img src="/images/bezier6.gif" alt><br>首先我们定义小球可以下拉的最大高度为MAX_HEIGHT，当小球随手势向下拉动的时候通过当前的高度/MAX_HEIGHT计算出当前的进度progress，后面就通过progress来确定绘制所需要的所有点<br><img src="/images/bezier7.png" alt><br>如图所示在圆上取点e1，e1与圆心连城的直线与垂线夹角为θ。过e1做圆的切线交基准线L于c1点，取基准线上s1点和e1为数据点，c1为控制点做二阶贝塞尔曲线(右侧类似)即可实现粘性效果。其中随着progress从0到1变化过程中</p>
 <ul>
 <li>θ从0到105度变化</li>
 <li>s1从最左侧到距离O点120距离移动<br>以下是添加辅助点后的效果<br><img src="/images/bezier8.gif" alt></li>
@@ -454,7 +454,7 @@
 <h1 id="应用三-小说仿真翻页效果"><a href="#应用三-小说仿真翻页效果" class="headerlink" title="应用三:小说仿真翻页效果"></a>应用三:小说仿真翻页效果</h1><p>目前市面上的小说阅读app基本都提供仿真翻页阅读的功能，本节将详细介绍实现的细节，demo效果如下<br><img src="/images/bezier11.gif" alt></p>
 <h2 id="原理解析"><a href="#原理解析" class="headerlink" title="原理解析"></a>原理解析</h2><p>本节着重讲解实现翻页效果的理论知识，下面这张图是整个翻页效果的精髓所在，接下来以从右下角开始翻页为例进行讲解。<br><img src="/images/bezier12.png" alt="图1"><br><img src="/images/bezier13.png" alt="图2"><br><img src="/images/bezier14.png" alt="图3"></p>
 <p>如图2所示，黄色区域为当前页面的背面，蓝色区域为下一页的内容，绿色为当前页面，我们第一步要做的就是确定三块区域对应的Path，这样后面才可以在Canvas上绘制对应的内容。<br>如图3所示，三角形aeh与三角形feh关于eh对称，aeh也就是我们翻页的部分，但是如果就按照这样来绘制显得不够逼真，没有真实翻页的效果，所以我们需要给翻页部分做一个平滑过渡的效果。经过ag中点做直线cj牌型与eh，交与三角形aeh于b、k点，且c、j为边界上的点。以cb为二阶贝塞尔曲线数据点，e为控制点做贝塞尔曲线，由贝塞尔性质可知该曲线与ce、ab相切，可以达到平滑过渡的效果。同理以ja为二阶贝塞尔曲线数据点，h为控制点做贝塞尔曲线平滑多度ih、ak。分别取两条贝塞尔曲线的定点d、i连接，则d、b、a、k、i5个点连接的区域为图2黄色区域，也就是当前页背页的区域。有了黄色区域的范围，就可以很简单的求得蓝色区域和绿色区域的范围了。</p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>实现整体的效果非常复杂，有兴趣的可以看demo，本节重点讲解几个比较关键的点，首先将图3中的点命名</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>实现整体的效果非常复杂，本节重点讲解几个比较关键的点，首先将图3中的点命名</p>
 <ul>
 <li>a -&gt; mTouch</li>
 <li>f -&gt; mCorner</li>
