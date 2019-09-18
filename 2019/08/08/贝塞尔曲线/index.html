@@ -100,7 +100,7 @@
 <meta property="og:image" content="http://yoursite.com/images/bezier14.png">
 <meta property="og:image" content="http://yoursite.com/images/bezier15.png">
 <meta property="og:image" content="http://yoursite.com/images/bezier16.png">
-<meta property="og:updated_time" content="2019-09-17T13:15:14.556Z">
+<meta property="og:updated_time" content="2019-09-17T13:16:05.268Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="贝塞尔曲线">
 <meta name="twitter:description" content="贝塞尔原理贝塞尔曲线(Bézier curve)，又称贝兹曲线，是应用于二维图形应用程序的数学曲线，贝塞尔曲线的运用十分广泛，可以说贝塞尔曲线奠定了计算机绘图的基础(因为它可以将任何复杂的图形用精确的数学语言进行描述)，接下来以二阶贝塞尔曲线为例介绍贝塞尔曲线的定义、性质。二阶曲线由两个数据点(P0 和 P2)，一个控制点(P1)来描述曲线状态，如图所示红色曲线就是二阶贝塞尔曲线推导过程如下  在">
@@ -498,6 +498,21 @@
 
       
       
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
       
 
       
@@ -742,6 +757,12 @@
       </div>
     
 
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
     
 
   </div>
@@ -1223,6 +1244,43 @@
   
 
   
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "default";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "default";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
   
 
   
