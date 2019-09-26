@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/android.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/android.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Hprof概述HPROF最初是由J2SE支持的一种二进制堆转储格式 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcRoot信息、对象信息、详细的类信息。除去头部固定信息，其余">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于Hprof的方方面面">
+<meta property="og:url" content="http://yoursite.com/2019/09/18/关于Hprof的方方面面/index.html">
+<meta property="og:site_name" content="干就完事了">
+<meta property="og:description" content="Hprof概述HPROF最初是由J2SE支持的一种二进制堆转储格式 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcRoot信息、对象信息、详细的类信息。除去头部固定信息，其余">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/hprof1.png">
+<meta property="og:image" content="http://yoursite.com/images/hprof2.png">
+<meta property="og:updated_time" content="2019-09-26T14:19:19.524Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于Hprof的方方面面">
+<meta name="twitter:description" content="Hprof概述HPROF最初是由J2SE支持的一种二进制堆转储格式 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcRoot信息、对象信息、详细的类信息。除去头部固定信息，其余">
+<meta name="twitter:image" content="http://yoursite.com/images/hprof1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/18/关于Hprof的方方面面/">
+
+
+
+
+
+  <title>关于Hprof的方方面面 | 干就完事了</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">干就完事了</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Stay Hungry, Stay Foolish</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/18/关于Hprof的方方面面/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XDMrWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="干就完事了">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">关于Hprof的方方面面</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-18T20:31:54+08:00">
+                2019-09-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/内存/" itemprop="url" rel="index">
+                    <span itemprop="name">内存</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/18/关于Hprof的方方面面/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/09/18/关于Hprof的方方面面/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Hprof概述"><a href="#Hprof概述" class="headerlink" title="Hprof概述"></a>Hprof概述</h1><p>HPROF最初是由J2SE支持的一种二进制堆转储格式</p>
+<h1 id="格式"><a href="#格式" class="headerlink" title="格式"></a>格式</h1><p>详细的Hprof标准格式可以参考<a href="http://hg.openjdk.java.net/jdk8/jdk8/jdk/raw-file/tip/src/share/demo/jvmti/hprof/manual.html" target="_blank" rel="noopener">HPROF Agent</a>(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcRoot信息、对象信息、详细的类信息。<br>除去头部固定信息，其余的信息格式都是由Tag、Time、Length、Body组成，我们称之为一个Record。</p>
+<table>
+<thead>
+<tr>
+<th align="left">1</th>
+<th align="left">4</th>
+<th align="left">4</th>
+<th>Length</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">tag</td>
+<td align="left">time</td>
+<td align="left">length</td>
+<td>body</td>
+</tr>
+</tbody></table>
+<p>不同类型的Record的body部分格式不同，接下来解析一些比较重要的Record。</p>
+<h2 id="Head"><a href="#Head" class="headerlink" title="Head"></a>Head</h2><h3 id="FixedHead"><a href="#FixedHead" class="headerlink" title="FixedHead"></a>FixedHead</h3><p>Hprof首先包含了文件的版本描述及版本号，一般固定为”JAVA PROFILE 1.0.2”，以/0结尾，随后是长度为4字节的ID标识的size，最后是长度为8字节的时间戳。hprof文件中几乎所有类型的record都有用到id，这里的ID size指的就是这个id的长度，用来告诉我们需要读取多少字节的内容来获取id。</p>
+<table>
+<thead>
+<tr>
+<th align="left">19</th>
+<th align="left">4</th>
+<th>8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">“JAVA PROFILE 1.0.2/0”</td>
+<td align="left">ID size</td>
+<td>时间戳</td>
+</tr>
+</tbody></table>
+<h3 id="StringTable"><a href="#StringTable" class="headerlink" title="StringTable"></a>StringTable</h3><p>FixedHead后面就是一系列的String Record，Tag为0x01，用于存储String与id的映射关系。这里的String存储了后面将用到字符串，包括类名，常量等。String Record的body包含一个id和长度为(Length - idSize)的字符串(因为body部分的长度为Length，所以字符串内容部分的长度时候Length - idSize)。</p>
+<h3 id="LOAD-CLASS"><a href="#LOAD-CLASS" class="headerlink" title="LOAD CLASS"></a>LOAD CLASS</h3><p>LOAD CLASS Record记录了简单的类信息，Tag为0x02。body部分包含了四个字节长的序列号、类id、四个字节长的栈序列号、类名id，可以通过类名id从上述的一系列String Record中找到当前类的类名。</p>
+<h2 id="Body"><a href="#Body" class="headerlink" title="Body"></a>Body</h2><p>Hprof文件的Body部分主要是两个Record，HEAP DUMP和HEAP DUMP SEGMENT。这两个Record主要是包含GcRoot信息、对象信息、详细的类信息，在解析Hprof的时候这两个Record对我们来说作用是一样的(不知道为啥分成两个Record？)，接下来就以HEAP DUMP为例。<br>HEAP DUMP是一个非常大的Record，内部包含了一系列的SubRecord，每个SubRecord均以一个字节的SubTag开头，接下来一一解析这些SubRecord。</p>
+<h3 id="ROOT-XXX"><a href="#ROOT-XXX" class="headerlink" title="ROOT XXX"></a>ROOT XXX</h3><p>首先是一系列的GCRoot，SubTag范围是 0x01到0x08 和 0xFF 这9个，每个GCRoot的Record均有一个Object Id，用来表示该GCRoot对应的Object，其余的部分参考文档。</p>
+<h3 id="CLASS-DUMP"><a href="#CLASS-DUMP" class="headerlink" title="CLASS DUMP"></a>CLASS DUMP</h3><p>CLASS DUMP包含详细的类信息，SubTag为0x20，接下来按照顺序来解析body部分的内容</p>
+<ul>
+<li>class object ID：与上面的LOAD CLASS中的类Id一致，所以可以通过之前的LOAD CLASS来得到当前类的类名</li>
+<li>stack trace serial number：四个字节的栈序列号</li>
+<li>super class object ID：父类的类Id</li>
+<li>class loader object ID：类加载器的Object Id</li>
+<li>signers object ID：暂不清楚作用</li>
+<li>protection domain object ID：暂不清楚作用</li>
+<li>reserved：两个reserved Id，不清楚作用</li>
+<li>instance size (in bytes)：四个字节的类实例占用的大小</li>
+<li>constant pool：两个字节的常量池数量n，接下来包含n个常量池Record，每一个常量池Record包含两个字节的index、一个字节的类型信息、x个字节的常量值。其中x根据该常量的类型决定，Object类型的值为一个Object Id，具体参考文档。</li>
+<li>静态变量信息：和constant pool十分类似，唯一区别是2个字节的index替换为变量Name Id，用来表示该静态变量的变量名</li>
+<li>成员变量信息：首先也是2个字节的数量n，接下来是n个成员变量Record，每一个Record包含一个Name Id和1个字节的变量类型</li>
+</ul>
+<p>综上，CLASS DUMP包含了类的类加载器、父类、实例大小、常量池、静态变量、成员变量的信息。</p>
+<h3 id="INSTANCE-DUMP"><a href="#INSTANCE-DUMP" class="headerlink" title="INSTANCE DUMP"></a>INSTANCE DUMP</h3><p>INSTANCE DUMP包含类对象的信息，SubTag为0x21。包含了一个Object Id、4个字节的栈序列号、类Id、4个字节的长度n、成员变量信息。其中长度n表示后面的成员变量信息占用了多少字节。成员变量信息是该对象所有成员变量的值组合在一起(包括父类的成员变量)，读取方式如下：</p>
+<ul>
+<li>从上述CLASS DUMP中获得当前类的成员变量信息，按照该信息顺序依次读取变量值(比如Char读取两个字节的长度，Object读取idSize的长度)</li>
+<li>获得父类的成员变量信息，重复上述操作，直至没有父类为止</li>
+</ul>
+<h3 id="OBJECT-ARRAY-DUMP-和-PRIMITIVE-ARRAY-DUMP"><a href="#OBJECT-ARRAY-DUMP-和-PRIMITIVE-ARRAY-DUMP" class="headerlink" title="OBJECT ARRAY DUMP 和 PRIMITIVE ARRAY DUMP"></a>OBJECT ARRAY DUMP 和 PRIMITIVE ARRAY DUMP</h3><p>这两个SubRecord存储数组对象的信息，比较简单，可以参考文档自行分析。</p>
+<h1 id="Android中的hprof"><a href="#Android中的hprof" class="headerlink" title="Android中的hprof"></a>Android中的hprof</h1><p>在Android设备上，我们可以通过两种方式生成当前进程的hprof文件</p>
+<ul>
+<li>通过调用<code>Debug.dumpHprofData(String filePath)</code>方法来生成hprof</li>
+<li>通过执行shell命令<code>adb shell am dumpheap pid /data/local/tmp/x.hprof</code>来生成指定进程的hprof文件到目标目录</li>
+</ul>
+<p>然而Android平台上的hprof文件和标准Java的hprof定义有一些区别，主要是版本号不一样，而且增加了一些特殊Tag，在art/runtime/hprof/hprof.cc中有如下定义<br><img src="/images/hprof1.png" alt><br>可以看出Android增加了额外的9个HeapTag，其中比较重要的是HPROF_HEAP_DUMP_INFO。这个Tag的作用是切换当前的堆，包括Heap-App、Heap-Image、Heap-Zygote。该Tag后面紧跟着一个四个字节的堆Id和一个堆名称Id，用于标示后续的所有Record内存均存放在该堆中。<br>如果想使用MAT等标准hprof工具来分析Android生成的hprof，我们需要使用AndroidSDK提供的hprof-conv工具将hprof转换为标准hprof，该工具在sdk/platform-tools下，使用方式如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 其中-z表示忽略除app堆以外的堆(Image/Zygote)</span><br><span class="line">hprof-conv [-z] infile outfile</span><br></pre></td></tr></table></figure>
+
+<p>hprof-conv具体做了什么呢？接下来通过hprof-conv的源码来分析</p>
+<h2 id="修改版本信息"><a href="#修改版本信息" class="headerlink" title="修改版本信息"></a>修改版本信息</h2><p><img src="/images/hprof2.png" alt><br>首先是将版本信息从”JAVA PROFILE 1.0.3”降为”JAVA PROFILE 1.0.2”，如果当前版本不是”JAVA PROFILE 1.0.3”则报错。</p>
+<h2 id="修改HeapTag信息"><a href="#修改HeapTag信息" class="headerlink" title="修改HeapTag信息"></a>修改HeapTag信息</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (len &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">char</span> subType = buf[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">int</span> justCopy = TRUE;</span><br><span class="line">        <span class="keyword">int</span> subLen;</span><br><span class="line">        DBUG(<span class="string">"--- 0x%02x  "</span>, subType);</span><br><span class="line">        <span class="keyword">switch</span> (subType) &#123;</span><br><span class="line">        <span class="comment">/* 1.0.2 types */</span></span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_UNKNOWN:</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_JNI_GLOBAL:</span><br><span class="line">            subLen = kIdentSize * <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_JNI_LOCAL:</span><br><span class="line">            subLen = kIdentSize + <span class="number">8</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_JAVA_FRAME:</span><br><span class="line">            subLen = kIdentSize + <span class="number">8</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_NATIVE_STACK:</span><br><span class="line">            subLen = kIdentSize + <span class="number">4</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_STICKY_CLASS:</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_THREAD_BLOCK:</span><br><span class="line">            subLen = kIdentSize + <span class="number">4</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_MONITOR_USED:</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_THREAD_OBJECT:</span><br><span class="line">            subLen = kIdentSize + <span class="number">8</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_CLASS_DUMP:</span><br><span class="line">            subLen = computeClassDumpLen(buf+<span class="number">1</span>, len<span class="number">-1</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_INSTANCE_DUMP:</span><br><span class="line">            subLen = computeInstanceDumpLen(buf+<span class="number">1</span>, len<span class="number">-1</span>);</span><br><span class="line">            <span class="comment">// 如果当前堆被忽略(带了-z参数)则丢弃该tag</span></span><br><span class="line">            <span class="keyword">if</span> (heapIgnore) &#123;</span><br><span class="line">                justCopy = FALSE;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_OBJECT_ARRAY_DUMP:</span><br><span class="line">            subLen = computeObjectArrayDumpLen(buf+<span class="number">1</span>, len<span class="number">-1</span>);</span><br><span class="line">            <span class="comment">// 如果当前堆被忽略(带了-z参数)则丢弃该tag</span></span><br><span class="line">            <span class="keyword">if</span> (heapIgnore) &#123;</span><br><span class="line">                justCopy = FALSE;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_PRIMITIVE_ARRAY_DUMP:</span><br><span class="line">            subLen = computePrimitiveArrayDumpLen(buf+<span class="number">1</span>, len<span class="number">-1</span>);</span><br><span class="line">            <span class="comment">// 如果当前堆被忽略(带了-z参数)则丢弃该tag</span></span><br><span class="line">            <span class="keyword">if</span> (heapIgnore) &#123;</span><br><span class="line">                justCopy = FALSE;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">/* these were added for Android in 1.0.3 */</span></span><br><span class="line">        <span class="comment">// 以下为Android新加HeapTag</span></span><br><span class="line">        <span class="keyword">case</span> HPROF_HEAP_DUMP_INFO:</span><br><span class="line">        	<span class="comment">// 如果带了-z参数则丢弃HPROF_HEAP_ZYGOTE和HPROF_HEAP_IMAGE堆的数据</span></span><br><span class="line">            heapType = get4BE(buf+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> ((flags &amp; kFlagAppOnly) != <span class="number">0</span></span><br><span class="line">                    &amp;&amp; (heapType == HPROF_HEAP_ZYGOTE || heapType == HPROF_HEAP_IMAGE)) &#123;</span><br><span class="line">                heapIgnore = TRUE;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                heapIgnore = FALSE;</span><br><span class="line">            &#125;</span><br><span class="line">            justCopy = FALSE;</span><br><span class="line">            subLen = kIdentSize + <span class="number">4</span>;</span><br><span class="line">            <span class="comment">// no 1.0.2 equivalent for this</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_INTERNED_STRING:</span><br><span class="line">        	<span class="comment">// 将tag名改为HPROF_ROOT_UNKNOWN</span></span><br><span class="line">            buf[<span class="number">0</span>] = HPROF_ROOT_UNKNOWN;</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_FINALIZING:</span><br><span class="line">            buf[<span class="number">0</span>] = HPROF_ROOT_UNKNOWN;</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_DEBUGGER:</span><br><span class="line">            buf[<span class="number">0</span>] = HPROF_ROOT_UNKNOWN;</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_REFERENCE_CLEANUP:</span><br><span class="line">            buf[<span class="number">0</span>] = HPROF_ROOT_UNKNOWN;</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_VM_INTERNAL:</span><br><span class="line">            buf[<span class="number">0</span>] = HPROF_ROOT_UNKNOWN;</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_ROOT_JNI_MONITOR:</span><br><span class="line">            <span class="comment">/* keep the ident, drop the next 8 bytes */</span></span><br><span class="line">            buf[<span class="number">0</span>] = HPROF_ROOT_UNKNOWN;</span><br><span class="line">            justCopy = FALSE;</span><br><span class="line">            ebAddData(pOutBuf, buf, <span class="number">1</span> + kIdentSize);</span><br><span class="line">            subLen = kIdentSize + <span class="number">8</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_UNREACHABLE:</span><br><span class="line">            buf[<span class="number">0</span>] = HPROF_ROOT_UNKNOWN;</span><br><span class="line">            subLen = kIdentSize;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> HPROF_PRIMITIVE_ARRAY_NODATA_DUMP:</span><br><span class="line">        	<span class="comment">// 将空array tag改为array tag且将长度设置为0</span></span><br><span class="line">            buf[<span class="number">0</span>] = HPROF_PRIMITIVE_ARRAY_DUMP;</span><br><span class="line">            buf[<span class="number">5</span>] = buf[<span class="number">6</span>] = buf[<span class="number">7</span>] = buf[<span class="number">8</span>] = <span class="number">0</span>;  <span class="comment">/* set array len to 0 */</span></span><br><span class="line">            subLen = kIdentSize + <span class="number">9</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">/* shouldn't get here */</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"ERROR: unexpected subtype 0x%02x at offset %zu\n"</span>,</span><br><span class="line">                subType, (<span class="keyword">size_t</span>) (buf - origBuf));</span><br><span class="line">            <span class="keyword">goto</span> bail;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (justCopy) &#123;</span><br><span class="line">            <span class="comment">/* copy source data */</span></span><br><span class="line">            DBUG(<span class="string">"(%d)\n"</span>, <span class="number">1</span> + subLen);</span><br><span class="line">            ebAddData(pOutBuf, buf, <span class="number">1</span> + subLen);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">/* other data has been written, or the sub-record omitted */</span></span><br><span class="line">            DBUG(<span class="string">"(adv %d)\n"</span>, <span class="number">1</span> + subLen);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/* advance to next entry */</span></span><br><span class="line">        buf += <span class="number">1</span> + subLen;</span><br><span class="line">        len -= <span class="number">1</span> + subLen;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要做了4件事</p>
+<ol>
+<li>针对标准hprof的HeapTag除了HPROF_INSTANCE_DUMP、HPROF_OBJECT_ARRAY_DUMP、HPROF_PRIMITIVE_ARRAY_DUMP照常写入，不做更改</li>
+<li>Android新增的Tag除了HPROF_HEAP_DUMP_INFO、HPROF_PRIMITIVE_ARRAY_NODATA_DUMP，都将Tag改为HPROF_ROOT_UNKNOWN写入，同时将HPROF_PRIMITIVE_ARRAY_NODATA_DUMP改为长度为0的HPROF_PRIMITIVE_ARRAY_DUMP</li>
+<li>丢弃HPROF_HEAP_DUMP_INFO Tag不写入，同时根据命令是否携带-z参数来判断当前堆是否需要写入，更新heapIgnore标志位</li>
+<li>针对HPROF_INSTANCE_DUMP、HPROF_OBJECT_ARRAY_DUMP、HPROF_PRIMITIVE_ARRAY_DUMP，如果当前堆不需要写入，即heapIgnore = TRUE，则丢弃当前Record信息</li>
+</ol>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="http://androidxref.com/8.1.0_r33/xref/art/runtime/hprof/hprof.cc" target="_blank" rel="noopener">hprof.cc</a></li>
+<li><a href="https://android.googlesource.com/platform/dalvik/+/refs/heads/android10-release/tools/hprof-conv/HprofConv.c" target="_blank" rel="noopener">HprofConv.c</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/08/贝塞尔曲线/" rel="next" title="贝塞尔曲线">
+                <i class="fa fa-chevron-left"></i> 贝塞尔曲线
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/24/MAT中的ShallowSize和RetainedSize/" rel="prev" title="MAT中的Shallow Heap和Retained Heap">
+                MAT中的Shallow Heap和Retained Heap <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="XDMrWu">
+            
+              <p class="site-author-name" itemprop="name">XDMrWu</p>
+              <p class="site-description motion-element" itemprop="description">Android从入门到放弃</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/1014277960" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1014277960@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hprof概述"><span class="nav-number">1.</span> <span class="nav-text">Hprof概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#格式"><span class="nav-number">2.</span> <span class="nav-text">格式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Head"><span class="nav-number">2.1.</span> <span class="nav-text">Head</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FixedHead"><span class="nav-number">2.1.1.</span> <span class="nav-text">FixedHead</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StringTable"><span class="nav-number">2.1.2.</span> <span class="nav-text">StringTable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LOAD-CLASS"><span class="nav-number">2.1.3.</span> <span class="nav-text">LOAD CLASS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Body"><span class="nav-number">2.2.</span> <span class="nav-text">Body</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ROOT-XXX"><span class="nav-number">2.2.1.</span> <span class="nav-text">ROOT XXX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLASS-DUMP"><span class="nav-number">2.2.2.</span> <span class="nav-text">CLASS DUMP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#INSTANCE-DUMP"><span class="nav-number">2.2.3.</span> <span class="nav-text">INSTANCE DUMP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OBJECT-ARRAY-DUMP-和-PRIMITIVE-ARRAY-DUMP"><span class="nav-number">2.2.4.</span> <span class="nav-text">OBJECT ARRAY DUMP 和 PRIMITIVE ARRAY DUMP</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Android中的hprof"><span class="nav-number">3.</span> <span class="nav-text">Android中的hprof</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#修改版本信息"><span class="nav-number">3.1.</span> <span class="nav-text">修改版本信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改HeapTag信息"><span class="nav-number">3.2.</span> <span class="nav-text">修改HeapTag信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XDMrWu</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">38k</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'v4uOb2oSkNUWLmJOr5j5cp0Y-gzGzoHsz',
+        appKey: 'j3Df04fan65gtXytpCbyzRgw',
+        placeholder: '说点什么',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -77,16 +77,17 @@
 
 
 
-<meta name="description" content="Android从入门到放弃">
-<meta property="og:type" content="website">
-<meta property="og:title" content="干就完事了">
-<meta property="og:url" content="http://yoursite.com/categories/Android源码/index.html">
+<meta name="description" content="概述在使用MAT分析内存快照的时候我们一般会关注对象占用的内存大小，在MAT中我们可以观察到两个数据Shallow Heap和Retained Heap，网上有很多文章介绍这两个数据的概念以及计算方式，但是很多文章都是有问题的(因此走了不少弯路)，所以自己研究了一下，接下来分别介绍。 PS:以下均以32位为例 Shallow HeapShallow Heap指的是对象本身占用的内存大小，包含两部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MAT中的Shallow Heap和Retained Heap">
+<meta property="og:url" content="http://yoursite.com/2019/09/24/MAT中的ShallowSize和RetainedSize/index.html">
 <meta property="og:site_name" content="干就完事了">
-<meta property="og:description" content="Android从入门到放弃">
+<meta property="og:description" content="概述在使用MAT分析内存快照的时候我们一般会关注对象占用的内存大小，在MAT中我们可以观察到两个数据Shallow Heap和Retained Heap，网上有很多文章介绍这两个数据的概念以及计算方式，但是很多文章都是有问题的(因此走了不少弯路)，所以自己研究了一下，接下来分别介绍。 PS:以下均以32位为例 Shallow HeapShallow Heap指的是对象本身占用的内存大小，包含两部分">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-24T13:55:40.748Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="干就完事了">
-<meta name="twitter:description" content="Android从入门到放弃">
+<meta name="twitter:title" content="MAT中的Shallow Heap和Retained Heap">
+<meta name="twitter:description" content="概述在使用MAT分析内存快照的时候我们一般会关注对象占用的内存大小，在MAT中我们可以观察到两个数据Shallow Heap和Retained Heap，网上有很多文章介绍这两个数据的概念以及计算方式，但是很多文章都是有问题的(因此走了不少弯路)，所以自己研究了一下，接下来分别介绍。 PS:以下均以32位为例 Shallow HeapShallow Heap指的是对象本身占用的内存大小，包含两部分">
 
 
 
@@ -116,13 +117,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/Android源码/">
+  <link rel="canonical" href="http://yoursite.com/2019/09/24/MAT中的ShallowSize和RetainedSize/">
 
 
 
 
 
-  <title>分类: Android源码 | 干就完事了</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>MAT中的Shallow Heap和Retained Heap | 干就完事了</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -141,7 +142,7 @@
     
   
 
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left ">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -257,261 +258,258 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block category">
-
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>Android源码<small>分类</small>
-        </h1>
-      </div>
-
-      
-        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/24/MAT中的ShallowSize和RetainedSize/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="XDMrWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="干就完事了">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2019/04/16/Android共享元素动画原理解析/" itemprop="url">
-              
-                <span itemprop="name">Android共享元素动画原理解析</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">MAT中的Shallow Heap和Retained Heap</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-16T15:17:00+08:00" content="2019-04-16">
-          04-16
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-24T18:35:17+08:00">
+                2019-09-24
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/内存/" itemprop="url" rel="index">
+                    <span itemprop="name">内存</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/24/MAT中的ShallowSize和RetainedSize/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/09/24/MAT中的ShallowSize和RetainedSize/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  799
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/11/02/Button点击时滑动的事件传递/" itemprop="url">
-              
-                <span itemprop="name">Button点击时滑动的事件传递</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2017-11-02T23:56:07+08:00" content="2017-11-02">
-          11-02
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>在使用MAT分析内存快照的时候我们一般会关注对象占用的内存大小，在MAT中我们可以观察到两个数据Shallow Heap和Retained Heap，网上有很多文章介绍这两个数据的概念以及计算方式，但是很多文章都是有问题的(因此走了不少弯路)，所以自己研究了一下，接下来分别介绍。</p>
+<p>PS:以下均以32位为例</p>
+<h1 id="Shallow-Heap"><a href="#Shallow-Heap" class="headerlink" title="Shallow Heap"></a>Shallow Heap</h1><p>Shallow Heap指的是对象本身占用的内存大小，包含两部分：</p>
+<ul>
+<li>对象头：可参考<a href="https://blog.csdn.net/lkforce/article/details/81128115" target="_blank" rel="noopener">Java的对象头和对象组成详解</a>，总结一下就是普通对象的对象头占8字节，数组对象占12字节(包括4字节的数组长度)</li>
+<li>成员变量：如果是基本类型则按照基本类型的大小来算(如int占用4字节，char占用2字节)，如果是对象引用则一律占用4个字节</li>
+</ul>
+<p>由以上可得出Shallow Heap计算方法为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Shallow Heap = sizeof(对象头) + sizeof(所有成员变量)</span><br></pre></td></tr></table></figure>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+<p>由于对象内存分配是以8字节为单位的，所以最终的Shallow Heap如果不是8的倍数则需要增加至8的倍数</p>
+<h1 id="Retained-Heap"><a href="#Retained-Heap" class="headerlink" title="Retained Heap"></a>Retained Heap</h1><p>为了能够更好的理解，引入Retained Set 和 Dominator的概念</p>
+<ul>
+<li>Dominator：如果GCRoot到对象B的所有路径中均包含对象A，则称A为B的Dominator，意味着如果A被回收，GCRoot将没有到B的链路，B成为可回收对象。</li>
+<li>Retained Set：对象A的Retained Set指的是包含所有以A为Dominator的对象的集合</li>
+</ul>
+<p>A的Retained Heap就是A和Retained Set中所有对象的Shallow Heap的合，可以理解为A被回收后进行一次GC，包括A可总共回收的内存就是Retained Heap。</p>
+<p>Retained Heap计算方法为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Retained Heap = shallowHeapOf(A) + shallowHeapOf(Retained Set内所有对象)</span><br></pre></td></tr></table></figure>
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/06/18/NestedScrolling详解/" itemprop="url">
-              
-                <span itemprop="name">NestedScrolling详解</span>
-              
-            </a>
-        
-      </h2>
+<h1 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h1><p>接下来举一个例子来应用上述计算方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class A &#123;</span><br><span class="line">    int i = 0;</span><br><span class="line">    long l = 0;</span><br><span class="line">    int[] intArray = new int[2];</span><br><span class="line">    char[] charArray = new char[2];</span><br><span class="line">    B b = new B();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class B &#123;</span><br><span class="line">    int i = 0;</span><br><span class="line">    long l = 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">	A a = new A();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2017-06-18T00:45:45+08:00" content="2017-06-18">
-          06-18
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2017/05/27/Toast源码解析/" itemprop="url">
-              
-                <span itemprop="name">Toast源码解析</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2017-05-27T23:37:40+08:00" content="2017-05-27">
-          05-27
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2016/11/15/Handler详解-实战篇/" itemprop="url">
-              
-                <span itemprop="name">Handler详解--实战篇</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2016-11-15T21:28:02+08:00" content="2016-11-15">
-          11-15
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2016/11/15/Handler详解-理论篇/" itemprop="url">
-              
-                <span itemprop="name">Handler详解--理论篇</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2016-11-15T17:18:09+08:00" content="2016-11-15">
-          11-15
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2016/07/21/Android事件分发机制详解/" itemprop="url">
-              
-                <span itemprop="name">Android事件分发机制详解</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2016-07-21T20:42:24+08:00" content="2016-07-21">
-          07-21
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2016/07/11/Service简析/" itemprop="url">
-              
-                <span itemprop="name">Service简析</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2016-07-11T19:47:06+08:00" content="2016-07-11">
-          07-11
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2016/07/05/PagerSlidingTabStrip源码解析/" itemprop="url">
-              
-                <span itemprop="name">PagerSlidingTabStrip源码解析</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2016-07-05T16:38:09+08:00" content="2016-07-05">
-          07-05
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+<p>内存中有一个对象A，A持有对象B，我们首先来计算A、B的Shallow Heap</p>
+<h2 id="计算Shallow-Heap"><a href="#计算Shallow-Heap" class="headerlink" title="计算Shallow Heap"></a>计算Shallow Heap</h2><p>A持有两个基本类型的变量i、l和三个对象引用(数组也是对象！)，所以</p>
+<blockquote>
+<p>Shallow Heap = 8(对象头) + 4(int) + 8(long) + 4(对象引用) + 4(对象引用) + 4(对象引用) = 32</p>
+</blockquote>
+<p>B就只有两个基本类型的变量，所以</p>
+<blockquote>
+<p>Shallow Heap = 8(对象头) + 4(int) + 8(long) = 20</p>
+</blockquote>
+<p>但是20不是8的倍数，所以真正的Shallow Heap为24</p>
+<h2 id="计算Retained-Heap"><a href="#计算Retained-Heap" class="headerlink" title="计算Retained Heap"></a>计算Retained Heap</h2><p>由于B没有持有任何对象引用，所以Retained Heap就是Shallow Heap，为24<br>A持有三个对象引用，所以</p>
+<blockquote>
+<p>Retained Heap(A) = Shallow Heap(A) + 三个对象的Retained Heap</p>
+</blockquote>
+<p>intArray不持有对象，只持有基本类型int，所以</p>
+<blockquote>
+<p>Retained Heap(intArray) = Shallow Heap(intArray) = 12(对象头) + 4(int) * 2 = 20 -&gt; 24</p>
+</blockquote>
+<p>charArray同样不持有对象，只持有基本类型char，所以</p>
+<blockquote>
+<p>Retained Heap(charArray) = Shallow Heap(charArray) = 12(对象头) + 2(char) * 2 = 16</p>
+</blockquote>
+<p>综上</p>
+<blockquote>
+<p>Retained Heap(A) = 32(Shallow Heap) + 24(int[]) + 16(char[]) + 24(b) = 96</p>
+</blockquote>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.ibm.com/support/knowledgecenter/en/SS3KLZ/com.ibm.java.diagnostics.memory.analyzer.doc/shallowretainedheap.html" target="_blank" rel="noopener">Shallow and retained heap</a><br><a href="https://blog.csdn.net/lkforce/article/details/81128115" target="_blank" rel="noopener">Java的对象头和对象组成详解</a><br><a href="https://mingjunli.gitbooks.io/mat/content/%E6%A6%82%E5%BF%B5/Immediate%20Dominators.html" target="_blank" rel="noopener">Immediate Dominators</a></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/18/关于Hprof的方方面面/" rel="next" title="关于Hprof的方方面面">
+                <i class="fa fa-chevron-left"></i> 关于Hprof的方方面面
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -519,6 +517,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -540,8 +545,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -610,6 +624,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Shallow-Heap"><span class="nav-number">2.</span> <span class="nav-text">Shallow Heap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Retained-Heap"><span class="nav-number">3.</span> <span class="nav-text">Retained Heap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#举例"><span class="nav-number">4.</span> <span class="nav-text">举例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#计算Shallow-Heap"><span class="nav-number">4.1.</span> <span class="nav-text">计算Shallow Heap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算Retained-Heap"><span class="nav-number">4.2.</span> <span class="nav-text">计算Retained Heap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">4.3.</span> <span class="nav-text">参考文章</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -773,6 +803,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

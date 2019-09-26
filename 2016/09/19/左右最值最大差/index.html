@@ -77,17 +77,17 @@
 
 
 
-<meta name="description" content="题目描述给定一个长度为N(N&amp;gt;1)的整型数组A，可以将A划分成左右两个部分，左部分A[0..K]，右部分A[K+1..N-1]，K可以取值的范围是[0,N-2]。求这么多划分方案中，左部分中的最大值减去右部分最大值的绝对值，最大是多少？给定整数数组A和数组的大小n，请返回题目所求的答案。 分析首先可以确定的就是两个数中肯定有一个是A中的最大值。假设是A[i]，这时候我们有两种选择：左边和右边">
+<meta name="description" content="#题目描述给定一个长度为N(N&amp;gt;1)的整型数组A，可以将A划分成左右两个部分，左部分A[0..K]，右部分A[K+1..N-1]，K可以取值的范围是[0,N-2]。求这么多划分方案中，左部分中的最大值减去右部分最大值的绝对值，最大是多少？给定整数数组A和数组的大小n，请返回题目所求的答案。#分析首先可以确定的就是两个数中肯定有一个是A中的最大值。假设是A[i]，这时候我们有两种选择：左边和右">
 <meta property="og:type" content="article">
 <meta property="og:title" content="左右最值最大差">
 <meta property="og:url" content="http://yoursite.com/2016/09/19/左右最值最大差/index.html">
 <meta property="og:site_name" content="干就完事了">
-<meta property="og:description" content="题目描述给定一个长度为N(N&amp;gt;1)的整型数组A，可以将A划分成左右两个部分，左部分A[0..K]，右部分A[K+1..N-1]，K可以取值的范围是[0,N-2]。求这么多划分方案中，左部分中的最大值减去右部分最大值的绝对值，最大是多少？给定整数数组A和数组的大小n，请返回题目所求的答案。 分析首先可以确定的就是两个数中肯定有一个是A中的最大值。假设是A[i]，这时候我们有两种选择：左边和右边">
+<meta property="og:description" content="#题目描述给定一个长度为N(N&amp;gt;1)的整型数组A，可以将A划分成左右两个部分，左部分A[0..K]，右部分A[K+1..N-1]，K可以取值的范围是[0,N-2]。求这么多划分方案中，左部分中的最大值减去右部分最大值的绝对值，最大是多少？给定整数数组A和数组的大小n，请返回题目所求的答案。#分析首先可以确定的就是两个数中肯定有一个是A中的最大值。假设是A[i]，这时候我们有两种选择：左边和右">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-09-18T09:52:33.073Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="左右最值最大差">
-<meta name="twitter:description" content="题目描述给定一个长度为N(N&amp;gt;1)的整型数组A，可以将A划分成左右两个部分，左部分A[0..K]，右部分A[K+1..N-1]，K可以取值的范围是[0,N-2]。求这么多划分方案中，左部分中的最大值减去右部分最大值的绝对值，最大是多少？给定整数数组A和数组的大小n，请返回题目所求的答案。 分析首先可以确定的就是两个数中肯定有一个是A中的最大值。假设是A[i]，这时候我们有两种选择：左边和右边">
+<meta name="twitter:description" content="#题目描述给定一个长度为N(N&amp;gt;1)的整型数组A，可以将A划分成左右两个部分，左部分A[0..K]，右部分A[K+1..N-1]，K可以取值的范围是[0,N-2]。求这么多划分方案中，左部分中的最大值减去右部分最大值的绝对值，最大是多少？给定整数数组A和数组的大小n，请返回题目所求的答案。#分析首先可以确定的就是两个数中肯定有一个是A中的最大值。假设是A[i]，这时候我们有两种选择：左边和右">
 
 
 
@@ -407,9 +407,8 @@
       
 
       
-        <h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>给定一个长度为N(N&gt;1)的整型数组A，可以将A划分成左右两个部分，左部分A[0..K]，右部分A[K+1..N-1]，K可以取值的范围是[0,N-2]。求这么多划分方案中，左部分中的最大值减去右部分最大值的绝对值，最大是多少？<br>给定整数数组A和数组的大小n，请返回题目所求的答案。</p>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>首先可以确定的就是两个数中肯定有一个是A中的最大值。<br>假设是A[i]，这时候我们有两种选择：左边和右边。由于使用k划分为左右两块，那么我们就要确定A[i]在左边还是右边。假设在左边，那我们要取的值肯定是右边的，可以确定的是无论k为多少，最右边的也就是A[n - 1]肯定在范围内，这时候我们判断一下，如果取得不是A[n - 1]，是A[i] ( k &lt; i &lt; n - 1)。如果大于A[n - 1]那我们还不如取A[n - 1]都会比这个差值大（只要调整k让i &lt; k就可以），如果A[i] &lt; A[n - 1]，那不用说我们肯定取A[n - 1],所以无论如何都是最右边的值。另一种情况一样，取最左边的值，所以我们取两端比较小的值就可以。</p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public int findMax(int[] A, int n) &#123;</span><br><span class="line">    int max = 0;</span><br><span class="line">    for (int i = 0; i != n; i++) &#123;</span><br><span class="line">        max = Math.max(max, A[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    int min = Math.min(A[0], A[n - 1]);</span><br><span class="line">    return max - min;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>#题目描述<br>给定一个长度为N(N&gt;1)的整型数组A，可以将A划分成左右两个部分，左部分A[0..K]，右部分A[K+1..N-1]，K可以取值的范围是[0,N-2]。求这么多划分方案中，左部分中的最大值减去右部分最大值的绝对值，最大是多少？<br>给定整数数组A和数组的大小n，请返回题目所求的答案。<br>#分析<br>首先可以确定的就是两个数中肯定有一个是A中的最大值。<br>假设是A[i]，这时候我们有两种选择：左边和右边。由于使用k划分为左右两块，那么我们就要确定A[i]在左边还是右边。假设在左边，那我们要取的值肯定是右边的，可以确定的是无论k为多少，最右边的也就是A[n - 1]肯定在范围内，这时候我们判断一下，如果取得不是A[n - 1]，是A[i] ( k &lt; i &lt; n - 1)。如果大于A[n - 1]那我们还不如取A[n - 1]都会比这个差值大（只要调整k让i &lt; k就可以），如果A[i] &lt; A[n - 1]，那不用说我们肯定取A[n - 1],所以无论如何都是最右边的值。另一种情况一样，取最左边的值，所以我们取两端比较小的值就可以。<br>#代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public int findMax(int[] A, int n) &#123;</span><br><span class="line">    int max = 0;</span><br><span class="line">    for (int i = 0; i != n; i++) &#123;</span><br><span class="line">        max = Math.max(max, A[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    int min = Math.min(A[0], A[n - 1]);</span><br><span class="line">    return max - min;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -501,17 +500,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -528,7 +518,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -539,7 +529,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -581,22 +571,6 @@
       </section>
 
       
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
 
       
 
@@ -624,7 +598,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">34.8k</span>
+    <span title="Site words total count">38k</span>
   
 </div>
 
