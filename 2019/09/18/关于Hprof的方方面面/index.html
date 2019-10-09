@@ -77,19 +77,19 @@
 
 
 
-<meta name="description" content="Hprof概述HPROF最初是由J2SE支持的一种二进制堆转储格式 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcRoot信息、对象信息、详细的类信息。除去头部固定信息，其余">
+<meta name="description" content="Hprof概述hprof最初是由J2SE支持的一种二进制堆转储格式，hprof文件保存了当前java堆上所有的内存使用信息。 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcR">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于Hprof的方方面面">
 <meta property="og:url" content="http://yoursite.com/2019/09/18/关于Hprof的方方面面/index.html">
 <meta property="og:site_name" content="干就完事了">
-<meta property="og:description" content="Hprof概述HPROF最初是由J2SE支持的一种二进制堆转储格式 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcRoot信息、对象信息、详细的类信息。除去头部固定信息，其余">
+<meta property="og:description" content="Hprof概述hprof最初是由J2SE支持的一种二进制堆转储格式，hprof文件保存了当前java堆上所有的内存使用信息。 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcR">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/hprof1.png">
 <meta property="og:image" content="http://yoursite.com/images/hprof2.png">
-<meta property="og:updated_time" content="2019-09-26T14:21:22.158Z">
+<meta property="og:updated_time" content="2019-10-09T09:27:33.752Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于Hprof的方方面面">
-<meta name="twitter:description" content="Hprof概述HPROF最初是由J2SE支持的一种二进制堆转储格式 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcRoot信息、对象信息、详细的类信息。除去头部固定信息，其余">
+<meta name="twitter:description" content="Hprof概述hprof最初是由J2SE支持的一种二进制堆转储格式，hprof文件保存了当前java堆上所有的内存使用信息。 格式详细的Hprof标准格式可以参考HPROF Agent(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcR">
 <meta name="twitter:image" content="http://yoursite.com/images/hprof1.png">
 
 
@@ -410,7 +410,7 @@
       
 
       
-        <h1 id="Hprof概述"><a href="#Hprof概述" class="headerlink" title="Hprof概述"></a>Hprof概述</h1><p>HPROF最初是由J2SE支持的一种二进制堆转储格式</p>
+        <h1 id="Hprof概述"><a href="#Hprof概述" class="headerlink" title="Hprof概述"></a>Hprof概述</h1><p>hprof最初是由J2SE支持的一种二进制堆转储格式，hprof文件保存了当前java堆上所有的内存使用信息。</p>
 <h1 id="格式"><a href="#格式" class="headerlink" title="格式"></a>格式</h1><p>详细的Hprof标准格式可以参考<a href="http://hg.openjdk.java.net/jdk8/jdk8/jdk/raw-file/tip/src/share/demo/jvmti/hprof/manual.html" target="_blank" rel="noopener">HPROF Agent</a>(强烈建议首先阅读该文档，本文仅挑部分重点详解)，本节将根据该文档简单介绍Hprof格式。Hprof可分为Head和Body两部分，Head主要是包含固定信息、字符串信息、简单的类信息、栈信息，Body部分包含GcRoot信息、对象信息、详细的类信息。<br>除去头部固定信息，其余的信息格式都是由Tag、Time、Length、Body组成，我们称之为一个Record。</p>
 <table>
 <thead>
@@ -428,7 +428,7 @@
 <td>body</td>
 </tr>
 </tbody></table>
-<p>不同类型的Record的body部分格式不同，接下来解析一些比较重要的Record。</p>
+<p>不同类型的Record的body部分格式不同，接下来分析一些比较重要的Record。</p>
 <h2 id="Head"><a href="#Head" class="headerlink" title="Head"></a>Head</h2><h3 id="FixedHead"><a href="#FixedHead" class="headerlink" title="FixedHead"></a>FixedHead</h3><p>Hprof首先包含了文件的版本描述及版本号，一般固定为”JAVA PROFILE 1.0.2”，以/0结尾，随后是长度为4字节的ID标识的size，最后是长度为8字节的时间戳。hprof文件中几乎所有类型的record都有用到id，这里的ID size指的就是这个id的长度，用来告诉我们需要读取多少字节的内容来获取id。</p>
 <table>
 <thead>
@@ -445,7 +445,7 @@
 </tr>
 </tbody></table>
 <h3 id="StringTable"><a href="#StringTable" class="headerlink" title="StringTable"></a>StringTable</h3><p>FixedHead后面就是一系列的String Record，Tag为0x01，用于存储String与id的映射关系。这里的String存储了后面将用到字符串，包括类名，常量等。String Record的body包含一个id和长度为(Length - idSize)的字符串(因为body部分的长度为Length，所以字符串内容部分的长度时候Length - idSize)。</p>
-<h3 id="LOAD-CLASS"><a href="#LOAD-CLASS" class="headerlink" title="LOAD CLASS"></a>LOAD CLASS</h3><p>LOAD CLASS Record记录了简单的类信息，Tag为0x02。body部分包含了四个字节长的序列号、类id、四个字节长的栈序列号、类名id，可以通过类名id从上述的一系列String Record中找到当前类的类名。</p>
+<h3 id="LOAD-CLASS"><a href="#LOAD-CLASS" class="headerlink" title="LOAD CLASS"></a>LOAD CLASS</h3><p>LOAD CLASS Record记录了简单的类信息，Tag为0x02。body部分包含了4个字节长的序列号、类id、4个字节长的栈序列号、类名id，可以通过类名id从上述的一系列String Record中找到当前类的类名。</p>
 <h2 id="Body"><a href="#Body" class="headerlink" title="Body"></a>Body</h2><p>Hprof文件的Body部分主要是两个Record，HEAP DUMP和HEAP DUMP SEGMENT。这两个Record主要是包含GcRoot信息、对象信息、详细的类信息，在解析Hprof的时候这两个Record对我们来说作用是一样的(不知道为啥分成两个Record？)，接下来就以HEAP DUMP为例。<br>HEAP DUMP是一个非常大的Record，内部包含了一系列的SubRecord，每个SubRecord均以一个字节的SubTag开头，接下来一一解析这些SubRecord。</p>
 <h3 id="ROOT-XXX"><a href="#ROOT-XXX" class="headerlink" title="ROOT XXX"></a>ROOT XXX</h3><p>首先是一系列的GCRoot，SubTag范围是 0x01到0x08 和 0xFF 这9个，每个GCRoot的Record均有一个Object Id，用来表示该GCRoot对应的Object，其余的部分参考文档。</p>
 <h3 id="CLASS-DUMP"><a href="#CLASS-DUMP" class="headerlink" title="CLASS DUMP"></a>CLASS DUMP</h3><p>CLASS DUMP包含详细的类信息，SubTag为0x20，接下来按照顺序来解析body部分的内容</p>
@@ -483,10 +483,12 @@
 
 <p>主要做了4件事</p>
 <ol>
-<li>针对标准hprof的HeapTag除了HPROF_INSTANCE_DUMP、HPROF_OBJECT_ARRAY_DUMP、HPROF_PRIMITIVE_ARRAY_DUMP照常写入，不做更改</li>
-<li>Android新增的Tag除了HPROF_HEAP_DUMP_INFO、HPROF_PRIMITIVE_ARRAY_NODATA_DUMP，都将Tag改为HPROF_ROOT_UNKNOWN写入，同时将HPROF_PRIMITIVE_ARRAY_NODATA_DUMP改为长度为0的HPROF_PRIMITIVE_ARRAY_DUMP</li>
-<li>丢弃HPROF_HEAP_DUMP_INFO Tag不写入，同时根据命令是否携带-z参数来判断当前堆是否需要写入，更新heapIgnore标志位</li>
-<li>针对HPROF_INSTANCE_DUMP、HPROF_OBJECT_ARRAY_DUMP、HPROF_PRIMITIVE_ARRAY_DUMP，如果当前堆不需要写入，即heapIgnore = TRUE，则丢弃当前Record信息</li>
+<li><p align="left">针对标准hprof的HeapTag除了HPROF_INSTANCE_DUMP、HPROF_OBJECT_ARRAY_DUMP、HPROF_PRIMITIVE_ARRAY_DUMP照常写入，不做更改</p></li>
+<li><p align="left">Android新增的Tag除了HPROF_HEAP_DUMP_INFO、HPROF_PRIMITIVE_ARRAY_NODATA_DUMP，都将Tag改为HPROF_ROOT_UNKNOWN写入，同时将HPROF_PRIMITIVE_ARRAY_NODATA_DUMP改为长度为0的HPROF_PRIMITIVE_ARRAY_DUMP</p></li>
+<li><p align="left">丢弃HPROF_HEAP_DUMP_INFO Tag不写入，同时根据命令是否携带-z参数来判断当前堆是否需要写入，更新heapIgnore标志位</p></li>
+<li><p align="left">针对HPROF_INSTANCE_DUMP、HPROF_OBJECT_ARRAY_DUMP、HPROF_PRIMITIVE_ARRAY_DUMP，如果当前堆不需要写入，即heapIgnore = TRUE，则丢弃当前Record信息</p>
+
+</li>
 </ol>
 <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
 <li><a href="http://androidxref.com/8.1.0_r33/xref/art/runtime/hprof/hprof.cc" target="_blank" rel="noopener">hprof.cc</a></li>
@@ -707,7 +709,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">38.5k</span>
+    <span title="Site words total count">38.2k</span>
   
 </div>
 
