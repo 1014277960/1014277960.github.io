@@ -87,7 +87,7 @@
 <meta property="og:image" content="http://yoursite.com/images/hprof0.jpg">
 <meta property="og:image" content="http://yoursite.com/images/hprof1.png">
 <meta property="og:image" content="http://yoursite.com/images/hprof2.png">
-<meta property="og:updated_time" content="2019-10-11T10:14:31.183Z">
+<meta property="og:updated_time" content="2019-10-11T10:38:11.811Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于Hprof的方方面面">
 <meta name="twitter:description" content="Hprof概述hprof最初是由J2SE支持的一种二进制堆转储格式，hprof文件保存了当前java堆上所有的内存使用信息，能够完整的反映虚拟机当前的内存状态。 格式详细的Hprof标准格式可以参考HPROF Agent，本节将根据该文档简单介绍Hprof格式。Hprof文件由FixedHead和一系列的Record组成，Record包含字符串信息、类信息、栈信息、GcRoot信息、对象信息。每个">
@@ -475,7 +475,7 @@
 <li>通过调用<code>Debug.dumpHprofData(String filePath)</code>方法来生成hprof文件</li>
 <li>通过执行shell命令<code>adb shell am dumpheap pid /data/local/tmp/x.hprof</code>来生成指定进程的hprof文件到目标目录</li>
 </ul>
-<p>然而Android平台上的hprof文件和标准Java的hprof定义有一些区别，主要是版本号不一样，而且增加了一些特殊Tag，在art/runtime/hprof/hprof.cc中有如下定义<br><img src="/images/hprof1.png" alt><br>可以看出Android增加了额外的9个HeapTag，其中比较重要的是HPROF_HEAP_DUMP_INFO。Android上将java堆分为Heap-App、Heap-Image、Heap-Zygote三块，这个Tag的作用是切换当前的堆，该Tag后面紧跟着一个4个字节的堆id和一个堆名称id。比如出现一个HPROF_HEAP_DUMP_INFO Record，且该Record表示Heap-Image，那么后续所有Record中的类、对象、GCRoot对象均在Heap-Image中存储，直到下一个HPROF_HEAP_DUMP_INFO出现改变当前的堆。<br>Android平台上针对hprof的改动会导致MAT等标准hprof分析工具无法解析，因此我们需要使用AndroidSDK提供的hprof-conv工具将hprof转换为标准hprof，该工具在sdk/platform-tools下，使用方式如下</p>
+<p>然而Android平台上的hprof文件和标准Java的hprof定义有一些区别，主要是版本号不一样，而且增加了一些特殊Tag，在art/runtime/hprof/hprof.cc中有如下定义<br><img src="/images/hprof1.png" alt><br>可以看出Android增加了额外的9个HeapTag，其中比较重要的是HPROF_HEAP_DUMP_INFO。Android上将java堆分为Heap-App、Heap-Image、Heap-Zygote三块，这个Tag的作用是切换当前的堆，该Tag后面紧跟着一个4个字节的堆id和一个堆名称id。比如出现一个HPROF_HEAP_DUMP_INFO Record，且该Record表示Heap-Image，那么表示后续所有Record中的类、对象、GCRoot对象均在Heap-Image中存储，直到下一个HPROF_HEAP_DUMP_INFO出现为止。<br>Android平台上针对hprof的改动会导致MAT等标准hprof分析工具无法解析，因此我们需要使用AndroidSDK提供的hprof-conv工具将hprof转换为标准hprof，该工具在sdk/platform-tools下，使用方式如下</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 其中-z表示忽略除app堆以外的堆(Image/Zygote)</span><br><span class="line">hprof-conv [-z] infile outfile</span><br></pre></td></tr></table></figure>
 
 <p>hprof-conv具体做了什么呢？接下来通过hprof-conv的源码来分析</p>
