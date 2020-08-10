@@ -495,11 +495,15 @@
 <p>TLS（Transport Layer Security，传输层安全性协议）以及其前身SSL（Secure Sockets Layer，安全套接层）是一种安全协议，为其上层协议提供在不安全信道上的安全传输服务。</p>
 </blockquote>
 <p>在HTTPS中，对发送者而言TLS/SSL用于加密来自HTTP协议的数据，对接收者而言TLS/SSL用于解密来自TCP协议的数据，这样就可以保证数据的安全性。由于客户端/服务端均存在加解密的操作，所以双方需要对加密算法/密钥等信息达成共识，这一过程也就是TLS握手协议所要达成的目的。<br><img src="/images/https8.png" alt></p>
-<h1 id="TLS握手过程"><a href="#TLS握手过程" class="headerlink" title="TLS握手过程"></a>TLS握手过程</h1><p>客户端与服务端连接的时候会进行一次TLS握手过程，就加密算法/密钥等信息达成共识，接下来详细介绍该过程。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Client                                        Server</span><br><span class="line">------                                        -----</span><br><span class="line">ClientHello          --------&gt;</span><br><span class="line">                                         ServerHello</span><br><span class="line">                                        Certificate*</span><br><span class="line">                                  ServerKeyExchange*</span><br><span class="line">                     &lt;--------       ServerHelloDone</span><br><span class="line">ClientKeyExchange</span><br><span class="line">[ChangeCipherSpec]</span><br><span class="line">Finished             --------&gt;</span><br><span class="line">                                  [ChangeCipherSpec]</span><br><span class="line">                     &lt;--------              Finished</span><br><span class="line"></span><br><span class="line">Application Data     &lt;-------&gt;      Application Data</span><br></pre></td></tr></table></figure></p>
+<h1 id="TLS握手过程"><a href="#TLS握手过程" class="headerlink" title="TLS握手过程"></a>TLS握手过程</h1><p>客户端与服务端连接的时候会进行一次TLS握手过程，就加密算法/密钥等信息达成共识，接下来详细介绍该过程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Client                                        Server</span><br><span class="line">------                                        -----</span><br><span class="line">ClientHello          --------&gt;</span><br><span class="line">                                         ServerHello</span><br><span class="line">                                        Certificate*</span><br><span class="line">                                  ServerKeyExchange*</span><br><span class="line">                     &lt;--------       ServerHelloDone</span><br><span class="line">ClientKeyExchange</span><br><span class="line">[ChangeCipherSpec]</span><br><span class="line">Finished             --------&gt;</span><br><span class="line">                                  [ChangeCipherSpec]</span><br><span class="line">                     &lt;--------              Finished</span><br><span class="line"></span><br><span class="line">Application Data     &lt;-------&gt;      Application Data</span><br></pre></td></tr></table></figure>
+
 <h2 id="ClientHello"><a href="#ClientHello" class="headerlink" title="ClientHello"></a>ClientHello</h2><p>第一步为客户端发送hello报文，通过wireshark我们可以看到内容如下<br><img src="/images/https9.png" alt><br>ClientHello报文传递给服务端如下信息</p>
 <ol>
-<li>Version: 客户端支持的TLS协议版本</li>
-<li>Random: 客户生成的随机数，该随机数会在后面的过程中用到。</li>
+<li><p>Version: 客户端支持的TLS协议版本</p>
+</li>
+<li><p>Random: 客户生成的随机数，该随机数会在后面的过程中用到。</p>
+</li>
 <li><p>Cipher Suites：客户端支持的密码套件，由客户按优先顺序排列，提供给服务端来选择，这里取其中一个来介绍密码套件的组成格式</p>
 <blockquote>
 <p>Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 (0xc02b)<br> TLS: 使用TLS协议<br> ECDHE: 密钥交换算法<br> ECDSA: 签名或验证算法<br> AES_128_GCM: 加解密算法<br> SHA256: 消息验证算法(MAC)</p>
@@ -507,7 +511,8 @@
 </li>
 <li><p>Compression Methods: 客户端支持的压缩算法，由于使用压缩可能导致安全问题，从TLS 1.3开始，协议就禁用了TLS压缩。</p>
 </li>
-<li>Extension：随后就是一系列的扩展参数了，用于扩展功能</li>
+<li><p>Extension：随后就是一系列的扩展参数了，用于扩展功能</p>
+</li>
 </ol>
 <h2 id="ServerHello"><a href="#ServerHello" class="headerlink" title="ServerHello"></a>ServerHello</h2><p>服务端接收到客户端hello报文后，会根据报文内容发送服务端hello报文给客户端<br><img src="/images/https10.png" alt><br>服务器会检查客户端支持的TLS版本和密码套件等信息，如果服务端接受这些条件，则回复服务端所选择的密码套件等信息给客户端，反之则发送握手失败信息。</p>
 <ol>
@@ -537,7 +542,9 @@
 <li>服务端随机数ServerHello.random，公开信息</li>
 <li>预主密钥pre_master_secret，保密信息</li>
 </ol>
-<p>计算主密钥的方式由RFC 5356规定：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">master_secret = PRF（pre_master_secret，“master secret”，ClientHello.random + ServerHello.random）[0..47];</span><br></pre></td></tr></table></figure></p>
+<p>计算主密钥的方式由RFC 5356规定：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">master_secret = PRF（pre_master_secret，“master secret”，ClientHello.random + ServerHello.random）[0..47];</span><br></pre></td></tr></table></figure>
+
 <p>其中，<code>PRF</code>是协议约定的伪随机函数。<br>得到主密钥后也不能开始加解密操作，而是需要根据主密钥生成四把密钥，两把用来加解密，两把用来生成MAC（因为部分对称加密算使用相同的密钥加密并不安全）。</p>
 <ul>
 <li>客户端写入加密密钥：客户端用来加密数据，服务器用来解密数据。</li>
@@ -679,7 +686,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -775,7 +782,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">45.2k</span>
+    <span title="Site words total count">45.5k</span>
   
 </div>
 
