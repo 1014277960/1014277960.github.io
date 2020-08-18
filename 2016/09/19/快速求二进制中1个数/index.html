@@ -77,17 +77,17 @@
 
 
 
-<meta name="description" content="先放代码 12345678public static int countNum(int n) &amp;#123;	int count = 0;	while (n != 0) &amp;#123;		n &amp;amp;= (n - 1);		count++;	&amp;#125;	return count;   &amp;#125;  n &amp;amp; (n - 1)能够置位最右边的1为0，这样循环计数，一直到为0就可以知道有多少个1">
+<meta name="description" content="先放代码 12345678public static int countNum(int n) &amp;#123;	int count = 0;	while (n != 0) &amp;#123;		n &amp;amp;= (n - 1);		count++;	&amp;#125;	return count;   &amp;#125; n &amp;amp; (n - 1)能够置位最右边的1为0，这样循环计数，一直到为0就可以知道有多少个1了">
 <meta property="og:type" content="article">
 <meta property="og:title" content="快速求二进制中1个数">
 <meta property="og:url" content="http://yoursite.com/2016/09/19/快速求二进制中1个数/index.html">
 <meta property="og:site_name" content="XDMrWu的博客">
-<meta property="og:description" content="先放代码 12345678public static int countNum(int n) &amp;#123;	int count = 0;	while (n != 0) &amp;#123;		n &amp;amp;= (n - 1);		count++;	&amp;#125;	return count;   &amp;#125;  n &amp;amp; (n - 1)能够置位最右边的1为0，这样循环计数，一直到为0就可以知道有多少个1">
+<meta property="og:description" content="先放代码 12345678public static int countNum(int n) &amp;#123;	int count = 0;	while (n != 0) &amp;#123;		n &amp;amp;= (n - 1);		count++;	&amp;#125;	return count;   &amp;#125; n &amp;amp; (n - 1)能够置位最右边的1为0，这样循环计数，一直到为0就可以知道有多少个1了">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-09-15T03:54:18.941Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="快速求二进制中1个数">
-<meta name="twitter:description" content="先放代码 12345678public static int countNum(int n) &amp;#123;	int count = 0;	while (n != 0) &amp;#123;		n &amp;amp;= (n - 1);		count++;	&amp;#125;	return count;   &amp;#125;  n &amp;amp; (n - 1)能够置位最右边的1为0，这样循环计数，一直到为0就可以知道有多少个1">
+<meta name="twitter:description" content="先放代码 12345678public static int countNum(int n) &amp;#123;	int count = 0;	while (n != 0) &amp;#123;		n &amp;amp;= (n - 1);		count++;	&amp;#125;	return count;   &amp;#125; n &amp;amp; (n - 1)能够置位最右边的1为0，这样循环计数，一直到为0就可以知道有多少个1了">
 
 
 
@@ -409,7 +409,6 @@
       
         <p>先放代码</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">countNum</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> (n != <span class="number">0</span>) &#123;</span><br><span class="line">		n &amp;= (n - <span class="number">1</span>);</span><br><span class="line">		count++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> count;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
 <p>n &amp; (n - 1)能够置位最右边的1为0，这样循环计数，一直到为0就可以知道有多少个1了。<br>那为什么n &amp; (n - 1)能够置位最右边的1为0呢？右边的部分情况肯定是这样的：<br>…..1000..0<br>减去一后就是这样<br>…..0111..1<br>左边省略号部分是不会变的，这样进行&amp;运算后这一部分都变成0了<br>…..0000..0<br>这样最右边的1就置位了。<br>这段代码对于负数也可以用，比如输入－1，输出32。因为负数的二进制表现和正数不一样，负数首位肯定是1，以－1为例，int是32位，首先求1的反码1111…1110，加1就是补码1111..1111所以就是32个1。</p>
 
       
@@ -601,7 +600,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">47.4k</span>
+    <span title="Site words total count">47.1k</span>
   
 </div>
 
