@@ -84,7 +84,7 @@
 <meta property="og:site_name" content="XDMrWu的博客">
 <meta property="og:description" content="Java中的SwitchJava中switch支持char、byte、short、int、Character、Byte、Short、Integer、String、Enum十种类型，其中对Emun与String的支持是在JDK1.5和JDK1.7的时候增加的，那么为什么switch不支持long、double、float三种基础类型？又是怎么支持String的呢？接下来从字节码层面来进行分析。 基础">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-08-18T10:11:33.871Z">
+<meta property="og:updated_time" content="2020-08-18T12:46:22.667Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="字节码层面看switch">
 <meta name="twitter:description" content="Java中的SwitchJava中switch支持char、byte、short、int、Character、Byte、Short、Integer、String、Enum十种类型，其中对Emun与String的支持是在JDK1.5和JDK1.7的时候增加的，那么为什么switch不支持long、double、float三种基础类型？又是怎么支持String的呢？接下来从字节码层面来进行分析。 基础">
@@ -438,8 +438,9 @@
 <p>sequences是一些列连续序列的合集，outliers则是零散case的合集，存在以下两种优化</p>
 <ul>
 <li>为sequences中每一个sequence创建tableSwitch，为outliers中每一个case创建if语句</li>
-<li>为sequences中每一个sequence创建tableSwitch，为outliers所有点创建一个lookupswitch<h1 id="GradleAPI-StringSwitch-java"><a href="#GradleAPI-StringSwitch-java" class="headerlink" title="GradleAPI StringSwitch.java"></a>GradleAPI StringSwitch.java</h1>通过ASM生成switch语句的辅助类，没处理hash冲突的问题</li>
+<li>为sequences中每一个sequence创建tableSwitch，为outliers所有点创建一个lookupswitch</li>
 </ul>
+<h1 id="GradleAPI"><a href="#GradleAPI" class="headerlink" title="GradleAPI"></a>GradleAPI</h1><p>通过ASM生成switch语句的辅助类，没处理hash冲突的问题<br><a href="https://android.googlesource.com/platform/tools/base/+/gradle_2.0.0/build-system/gradle-core/src/main/groovy/com/android/build/gradle/internal/incremental/StringSwitch.java" target="_blank" rel="noopener">StringSwitch.java</a></p>
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
 <li><a href="https://docs.oracle.com/javase/specs/jvms/se10/html/jvms-3.html#jvms-3.10" target="_blank" rel="noopener">jvm</a></li>
 </ul>
@@ -620,7 +621,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java中的Switch"><span class="nav-number">1.</span> <span class="nav-text">Java中的Switch</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础类型的Switch"><span class="nav-number">2.</span> <span class="nav-text">基础类型的Switch</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tableswitch"><span class="nav-number">2.1.</span> <span class="nav-text">tableswitch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lookupswitch"><span class="nav-number">2.2.</span> <span class="nav-text">lookupswitch</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#String的Switch"><span class="nav-number">3.</span> <span class="nav-text">String的Switch</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Enum的Switch"><span class="nav-number">4.</span> <span class="nav-text">Enum的Switch</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dex对Switch的优化"><span class="nav-number">5.</span> <span class="nav-text">Dex对Switch的优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GradleAPI-StringSwitch-java"><span class="nav-number">6.</span> <span class="nav-text">GradleAPI StringSwitch.java</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">7.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java中的Switch"><span class="nav-number">1.</span> <span class="nav-text">Java中的Switch</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础类型的Switch"><span class="nav-number">2.</span> <span class="nav-text">基础类型的Switch</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tableswitch"><span class="nav-number">2.1.</span> <span class="nav-text">tableswitch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lookupswitch"><span class="nav-number">2.2.</span> <span class="nav-text">lookupswitch</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#String的Switch"><span class="nav-number">3.</span> <span class="nav-text">String的Switch</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Enum的Switch"><span class="nav-number">4.</span> <span class="nav-text">Enum的Switch</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dex对Switch的优化"><span class="nav-number">5.</span> <span class="nav-text">Dex对Switch的优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GradleAPI"><span class="nav-number">6.</span> <span class="nav-text">GradleAPI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">7.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
             
 
           </div>
